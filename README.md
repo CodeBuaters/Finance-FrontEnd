@@ -1,32 +1,158 @@
-# React + TypeScript + Vite
+# FinSight Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+React + TypeScript frontend for the **FinSight** personal finance dashboard.
 
-Currently, two official plugins are available:
+The frontend provides a modern dashboard for viewing personal income, expenses, budgets, and imported bank transactions.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tech Stack
 
-## React Compiler
+* React 19
+* TypeScript
+* Vite
+* React Router
+* Axios
+* Material UI (or Tailwind CSS)
+* Recharts
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Features (MVP)
 
-## Expanding the Oxlint configuration
+* User authentication pages.
+* Dashboard with financial summary.
+* Expense charts and statistics.
+* Transaction list with filters.
+* CSV import page.
+* Budget overview.
+* Profile and settings page.
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+## Project Structure
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```text
+src
+├── assets
+├── components
+├── layouts
+├── pages
+├── services
+├── hooks
+├── context
+├── types
+├── utils
+└── router
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Getting Started
+
+### 1. Clone repository
+
+```bash
+git clone <repository-url>
+cd finsight-frontend
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure environment
+
+Create `.env` in the project root.
+
+```env
+VITE_API_URL=http://localhost:8080/api
+```
+
+### 4. Start development server
+
+```bash
+npm run dev
+```
+
+Application runs at:
+
+```text
+http://localhost:5173
+```
+
+## Planned Pages
+
+| Page         | Description                   |
+| ------------ | ----------------------------- |
+| Login        | User login page               |
+| Register     | User registration             |
+| Dashboard    | Financial overview and charts |
+| Transactions | View and edit transactions    |
+| Import CSV   | Upload bank transactions      |
+| Budgets      | Monthly budgets               |
+| Settings     | User profile and preferences  |
+
+## Planned Dashboard Components
+
+* Balance Card
+* Monthly Income Card
+* Monthly Expenses Card
+* Savings Card
+* Expense Pie Chart
+* Monthly Spending Bar Chart
+* Budget Progress Cards
+* Recent Transactions Table
+
+## API Communication
+
+Axios is used for communicating with the backend.
+
+Example structure:
+
+```text
+services/
+├── authService.ts
+├── transactionService.ts
+├── dashboardService.ts
+└── budgetService.ts
+```
+
+Authentication uses JWT tokens stored in the browser.
+
+## UI Design
+
+Design goals:
+
+* Clean fintech-inspired interface.
+* Responsive desktop-first layout.
+* Accessible components.
+* Consistent spacing and typography.
+* Emerald green primary accent.
+
+## Development Workflow
+
+* Create feature branches from `develop`.
+* Submit Pull Requests for review.
+* Keep components reusable.
+
+Example component folders:
+
+```text
+components/
+├── dashboard/
+├── transactions/
+├── budgets/
+├── navigation/
+└── common/
+```
+
+## Scripts
+
+```bash
+npm run dev        # Start development server
+npm run build      # Production build
+npm run preview    # Preview production build
+npm run lint       # Lint project
+```
+
+## Team
+
+**FinSight** — Software Project 2 (Haaga-Helia UAS)
+
+Frontend repository maintained by the FinSight development team.
+
