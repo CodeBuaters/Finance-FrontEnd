@@ -1,4 +1,10 @@
-import { Routes, Route, BrowserRouter } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+} from "react-router-dom";
 import DashboardPage from "../Pages/DashboardPage";
 import RegisterPage from "../Pages/RegisterPage";
 import TransactionsPage from "../Pages/TransactionsPage";
@@ -9,6 +15,14 @@ import LoginPage from "../Pages/LoginPage";
 import AuthLayout from "../Layouts/AuthLayout";
 import AppLayout from "../Layouts/AppLayout";
 
+const isAuthenticated = () => {
+  return Boolean(localStorage.getItem("authToken"));
+};
+
+const ProtectedRoute = () => {
+  return isAuthenticated() ? <Outlet /> : <Navigate to="/login" replace />;
+};
+
 export default function AppRouter() {
   return (
     <BrowserRouter>
@@ -18,14 +32,20 @@ export default function AppRouter() {
           <Route path="/register" element={<RegisterPage />} />
         </Route>
 
-        <Route element={<AppLayout />}>
-          <Route path="/" element={<DashboardPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/transactions" element={<TransactionsPage />} />
-          <Route path="/budgets" element={<BudgetsPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/import-csv" element={<ImportCSVPage />} />
+        <Route element={<ProtectedRoute />}>
+          <Route element={<AppLayout />}>
+            <Route path="/" element={<DashboardPage />} />
+            <Route path="/transactions" element={<TransactionsPage />} />
+            <Route path="/budgets" element={<BudgetsPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/import-csv" element={<ImportCSVPage />} />
+          </Route>
         </Route>
+
+        <Route
+          path="*"
+          element={<Navigate to={isAuthenticated() ? "/" : "/login"} replace />}
+        />
       </Routes>
     </BrowserRouter>
   );
