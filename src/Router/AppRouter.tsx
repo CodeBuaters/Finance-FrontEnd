@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
 import DashboardPage from "../Pages/DashboardPage";
 import RegisterPage from "../Pages/RegisterPage";
 import TransactionsPage from "../Pages/TransactionsPage";
@@ -11,20 +11,22 @@ import AppLayout from "../Layouts/AppLayout";
 
 export default function AppRouter() {
   return (
-    <Routes>
-      <Route element={<AuthLayout />}>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-      </Route>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<AuthLayout />}>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+        </Route>
 
-      <Route element={<AppLayout />}>
-        <Route path="/" element={<DashboardPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/transactions" element={<TransactionsPage />} />
-        <Route path="/budgets" element={<BudgetsPage />} />
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/import-csv" element={<ImportCSVPage />} />
-      </Route>
-    </Routes>
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<DashboardPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/transactions" element={<TransactionsPage />} />
+          <Route path="/budgets" element={<BudgetsPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/import-csv" element={<ImportCSVPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
