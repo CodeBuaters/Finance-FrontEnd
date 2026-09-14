@@ -3,7 +3,6 @@ import type { LoginRequest } from "../Types/loginRequest";
 import { loginUser } from "../Services/authService";
 import { useNavigate } from "react-router-dom";
 
-
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,23 +21,19 @@ export default function LoginPage() {
       const response = await loginUser(loginData);
       //console.log testausta varten
       console.log(response.data);
+      localStorage.setItem("user", JSON.stringify(response.data));
       navigate("/");
     } catch (error) {
-      setError("Invalid email or password")
+      setError("Invalid email or password");
     }
-
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="bg-white p-8 rounded shadow-md">
         <h1 className="text-2xl font-bold mb-4">Login</h1>
         <form onSubmit={handleSubmit}>
-          {error && (
-            <p className="text-red-500 mb-4">
-              {error}
-            </p>
-          )}
+          {error && <p className="text-red-500 mb-4">{error}</p>}
           <div className="mb-4">
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
@@ -81,7 +76,8 @@ export default function LoginPage() {
             <button
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="button"
-              onClick={() => navigate("/register")}>
+              onClick={() => navigate("/register")}
+            >
               Register
             </button>
           </div>

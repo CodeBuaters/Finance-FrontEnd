@@ -7,96 +7,13 @@ import TransactionsToolbar from "../Components/navigation/transactions/Transacti
 
 type TransactionFilter = "ALL" | Transaction["type"];
 
-const transactionUser = {
-  username: "sofia",
-  firstName: "Sofia",
-  lastName: "Larsson",
-  email: "sofia@example.com",
+type TransactionsPageProps = {
+  transactions: Transaction[];
 };
-const transactionFixtures: Array<
-  [string, string, string, Category, number, Transaction["type"]]
-> = [
-  [
-    "2024-08-28",
-    "Whole Foods Market",
-    "Weekly groceries",
-    "FOOD",
-    -84.32,
-    "EXPENSE",
-  ],
-  [
-    "2024-08-27",
-    "Spotify",
-    "Monthly subscription",
-    "ENTERTAINMENT",
-    -9.99,
-    "EXPENSE",
-  ],
-  ["2024-08-27", "Acme Corp Salary", "August salary", "SALARY", 4200, "INCOME"],
-  [
-    "2024-08-26",
-    "Shell Gas Station",
-    "Fuel",
-    "TRANSPORTATION",
-    -58.4,
-    "EXPENSE",
-  ],
-  ["2024-08-25", "IKEA", "Home furnishings", "SHOPPING", -214.75, "EXPENSE"],
-  ["2024-08-24", "Landlord Trust", "August rent", "HOUSING", -1800, "EXPENSE"],
-  [
-    "2024-08-23",
-    "Netflix",
-    "Streaming plan",
-    "ENTERTAINMENT",
-    -15.99,
-    "EXPENSE",
-  ],
-  [
-    "2024-08-22",
-    "City Pharmacy",
-    "Prescription",
-    "HEALTHCARE",
-    -32.5,
-    "EXPENSE",
-  ],
-  ["2024-08-21", "Uber", "Ride to airport", "TRANSPORTATION", -18.7, "EXPENSE"],
-  [
-    "2024-08-20",
-    "Electric Co.",
-    "August electricity",
-    "UTILITIES",
-    -96,
-    "EXPENSE",
-  ],
-  ["2024-08-19", "Chipotle", "Lunch", "FOOD", -14.8, "EXPENSE"],
-  ["2024-08-18", "Amazon", "Office supplies", "SHOPPING", -67.2, "EXPENSE"],
-  [
-    "2024-08-17",
-    "Savings Account",
-    "Monthly transfer",
-    "TRANSFER",
-    -300,
-    "TRANSFER",
-  ],
-];
 
-const transactions: Transaction[] = transactionFixtures.map(
-  (
-    [transactionDate, merchant, description, category, amount, type],
-    index,
-  ) => ({
-    id: `transaction-${index + 1}`,
-    transactionDate,
-    merchant,
-    description,
-    category,
-    amount,
-    type,
-    user: transactionUser,
-  }),
-);
-
-export default function TransactionsPage() {
+export default function TransactionsPage({
+  transactions,
+}: TransactionsPageProps) {
   const [query, setQuery] = useState("");
   const [type, setType] = useState<TransactionFilter>("ALL");
   const [category, setCategory] = useState("All");
@@ -122,7 +39,7 @@ export default function TransactionsPage() {
           category === "All" || transaction.category === category;
         return matchesQuery && matchesType && matchesCategory;
       }),
-    [category, query, type],
+    [category, query, transactions, type],
   );
 
   return (
