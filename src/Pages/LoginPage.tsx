@@ -1,28 +1,58 @@
 import { useState } from "react";
+import type { LoginRequest } from "../Types/loginRequest";
+import { loginUser } from "../Services/authService";
+import { useNavigate } from "react-router-dom";
+
 
 export default function LoginPage() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const loginData: LoginRequest = {
+      email,
+      password,
+    };
+
+    try {
+      const response = await loginUser(loginData);
+      //console.log testausta varten
+      console.log(response.data);
+      navigate("/");
+    } catch (error) {
+      setError("Invalid email or password")
+    }
+
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="bg-white p-8 rounded shadow-md">
         <h1 className="text-2xl font-bold mb-4">Login</h1>
-        <form>
+        <form onSubmit={handleSubmit}>
+          {error && (
+            <p className="text-red-500 mb-4">
+              {error}
+            </p>
+          )}
           <div className="mb-4">
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="username"
+              htmlFor="email"
             >
-              Username
+              Email:
             </label>
             <input
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="username"
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              id="email"
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="mb-4">
