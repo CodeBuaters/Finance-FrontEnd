@@ -1,11 +1,13 @@
 export type Category =
   | "FOOD"
-  | "TRANSPORT"
+  | "TRANSPORTATION"
   | "HOUSING"
+  | "UTILITIES"
   | "ENTERTAINMENT"
   | "SHOPPING"
-  | "HEALTH"
+  | "HEALTHCARE"
   | "EDUCATION"
   | "SALARY"
+  | "TRAVEL"
   | "TRANSFER"
   | "OTHER";

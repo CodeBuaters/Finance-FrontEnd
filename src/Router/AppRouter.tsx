@@ -1,4 +1,10 @@
-import { Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+} from "react-router-dom";
 import DashboardPage from "../Pages/DashboardPage";
 import RegisterPage from "../Pages/RegisterPage";
 import TransactionsPage from "../Pages/TransactionsPage";
@@ -8,23 +14,41 @@ import ImportCSVPage from "../Pages/ImportCSVPage";
 import LoginPage from "../Pages/LoginPage";
 import AuthLayout from "../Layouts/AuthLayout";
 import AppLayout from "../Layouts/AppLayout";
+import { getAccessToken } from "../Services/api";
+
+
+const isAuthenticated = () => {
+  return getAccessToken() !== null;
+};
+
+const ProtectedRoute = () => {
+  return isAuthenticated() ? <Outlet /> : <Navigate to="/login" replace />;
+};
 
 export default function AppRouter() {
   return (
-    <Routes>
-      <Route element={<AuthLayout />}>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-      </Route>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<AuthLayout />}>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+        </Route>
 
-      <Route element={<AppLayout />}>
-        <Route path="/" element={<DashboardPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/transactions" element={<TransactionsPage />} />
-        <Route path="/budgets" element={<BudgetsPage />} />
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/import-csv" element={<ImportCSVPage />} />
-      </Route>
-    </Routes>
+        <Route element={<ProtectedRoute />}>
+          <Route element={<AppLayout />}>
+            <Route path="/" element={<DashboardPage />} />
+            <Route path="/transactions" element={<TransactionsPage />} />
+            <Route path="/budgets" element={<BudgetsPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/import-csv" element={<ImportCSVPage />} />
+          </Route>
+        </Route>
+
+        <Route
+          path="*"
+          element={<Navigate to={isAuthenticated() ? "/" : "/login"} replace />}
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
