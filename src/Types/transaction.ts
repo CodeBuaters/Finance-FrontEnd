@@ -1,4 +1,5 @@
 import type { Category } from "./category";
+import type { User } from "./user";
 
 export interface Transaction {
   id: string;
@@ -6,6 +7,7 @@ export interface Transaction {
   transactionDate: string;
   merchant: string;
   description?: string;
-  type: "INCOME" | "EXPENSE";
-  category: Category;
+  type: "INCOME" | "EXPENSE" | "TRANSFER";
+  category?: Category | "OTHER";
+  user: User;
 }
