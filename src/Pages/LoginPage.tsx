@@ -2,12 +2,15 @@ import { useState } from "react";
 import type { LoginRequest } from "../Types/loginRequest";
 import { loginUser } from "../Services/authService";
 import { useNavigate } from "react-router-dom";
+import { useUserContext } from "../Context/userContextType";
+import { getUserByEmail } from "../Services/userService";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { setUser } = useUserContext();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -18,12 +21,15 @@ export default function LoginPage() {
     };
 
     try {
-      const response = await loginUser(loginData);
-      //console.log testausta varten
-      console.log(response.data);
-      localStorage.setItem("user", JSON.stringify(response.data));
+      await loginUser(loginData);
+      try {
+        const currentUser = await getUserByEmail(email);
+        setUser(currentUser);
+      } catch {
+        setError("Login succeeded, but your user profile could not be loaded.");
+      }
       navigate("/");
-    } catch (error) {
+    } catch {
       setError("Invalid email or password");
     }
   };

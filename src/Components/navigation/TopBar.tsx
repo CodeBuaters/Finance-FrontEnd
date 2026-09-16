@@ -1,21 +1,19 @@
 import { removeAccessToken, getAccessToken } from "../../Services/api";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useUserContext } from "../../Context/userContextType";
 
 export default function TopBar() {
   const navigate = useNavigate();
 
-  const [isLoggedIn, setIsLoggedIn] = useState(getAccessToken() !== null);
+  const { user, logout } = useUserContext();
+  const isLoggedIn = getAccessToken() !== null;
+  const username = user?.username || localStorage.getItem("username") || "User";
 
   const handleLogout = () => {
     removeAccessToken();
-    setIsLoggedIn(false);
+    logout();
     navigate("/login");
   };
-
-  const currentUser = getAccessToken()
-    ? JSON.parse(atob(getAccessToken()!.split(".")[1]))
-    : null;
 
   return (
     <header className="flex h-[84px] items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-8">
@@ -49,7 +47,7 @@ export default function TopBar() {
               SL
             </span>
             <span className="text-[12px] font-semibold text-slate-700">
-              {currentUser?.name ?? "User"}
+              {username}
             </span>
             <span className="text-xs text-slate-400">⌄</span>
 

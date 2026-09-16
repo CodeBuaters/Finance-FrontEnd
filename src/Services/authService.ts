@@ -3,15 +3,20 @@ import type { LoginRequest } from "../Types/loginRequest";
 import { api, setAccessToken } from "./api";
 
 export async function registerUser(data: RegisterRequest) {
-    const response = await api.post("/api/auth/register", data)
+  const response = await api.post("/api/auth/register", data);
 
-    return response;
+  return response;
 }
 
 export async function loginUser(data: LoginRequest) {
-    const response = await api.post("/api/auth/login", data)
+  const response = await api.post("/api/auth/login", data);
 
-    setAccessToken(response.data.accessToken);
+  const accessToken = response.data?.accessToken;
+  if (typeof accessToken !== "string" || accessToken.length === 0) {
+    throw new Error("Invalid email or password");
+  }
 
-    return response;
+  setAccessToken(accessToken);
+
+  return response;
 }
