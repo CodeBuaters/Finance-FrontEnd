@@ -1,6 +1,7 @@
 import { removeAccessToken, getAccessToken } from "../../Services/api";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../../Context/userContextType";
+import { logoutUser } from "../../Services/authService";
 
 export default function TopBar() {
   const navigate = useNavigate();
@@ -9,7 +10,12 @@ export default function TopBar() {
   const isLoggedIn = getAccessToken() !== null;
   const username = user?.username || localStorage.getItem("username") || "User";
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+    } catch {
+      // Ignore failures (e.g. token already expired) - still clear local session below.
+    }
     removeAccessToken();
     logout();
     navigate("/login");

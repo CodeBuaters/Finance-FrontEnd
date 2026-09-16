@@ -20,3 +20,7 @@ export async function loginUser(data: LoginRequest) {
 
   return response;
 }
+
+export async function logoutUser() {
+  await api.post("/api/auth/logout");
+}

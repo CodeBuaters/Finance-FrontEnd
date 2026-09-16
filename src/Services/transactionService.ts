@@ -6,3 +6,13 @@ export async function getTransaction(): Promise<Transaction[]> {
 
   return response.data;
 }
+
+export async function getTransactionsByUserId(
+  userId: number,
+): Promise<Transaction[]> {
+  const response = await api.get<Transaction[]>(
+    `/api/user/${userId}/transactions`,
+  );
+
+  return response.data;
+}

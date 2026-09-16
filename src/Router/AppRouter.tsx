@@ -18,7 +18,7 @@ import AuthLayout from "../Layouts/AuthLayout";
 import AppLayout from "../Layouts/AppLayout";
 import { getAccessToken } from "../Services/api";
 import type { Transaction } from "../Types/transaction";
-import { getTransaction } from "../Services/transactionService";
+import { getTransactionsByUserId } from "../Services/transactionService";
 import { useUserContext } from "../Context/userContextType";
 
 const isAuthenticated = () => {
@@ -34,15 +34,9 @@ function TransactionsRoute() {
   const { user } = useUserContext();
 
   useEffect(() => {
-    getTransaction().then((loadedTransactions) => {
-      setTransactions(
-        loadedTransactions.filter(
-          (transaction) =>
-            user?.id !== undefined &&
-            String(transaction.user?.id) === String(user.id),
-        ),
-      );
-    });
+    if (user?.id === undefined) return;
+
+    getTransactionsByUserId(user.id).then(setTransactions);
   }, [user?.id]);
 
   return <TransactionsPageProps transactions={transactions} />;

@@ -1,7 +1,7 @@
 import type { Category } from "../../../Types/category";
 import type { Transaction } from "../../../Types/transaction";
 
-type TransactionFilter = "ALL" | Transaction["type"];
+type TransactionFilter = "ALL" | Transaction["transactionType"];
 
 interface TransactionsToolbarProps {
   query: string;

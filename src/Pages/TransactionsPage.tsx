@@ -5,7 +5,7 @@ import TransactionTable from "../Components/navigation/transactions/Transactions
 import TransactionsPagination from "../Components/navigation/transactions/TransactionsPagination";
 import TransactionsToolbar from "../Components/navigation/transactions/TransactionsToolbar";
 
-type TransactionFilter = "ALL" | Transaction["type"];
+type TransactionFilter = "ALL" | Transaction["transactionType"];
 
 type TransactionsPageProps = {
   transactions: Transaction[];
@@ -34,7 +34,8 @@ export default function TransactionsPage({
           `${transaction.merchant} ${transaction.description ?? ""}`
             .toLowerCase()
             .includes(query.toLowerCase());
-        const matchesType = type === "ALL" || transaction.type === type;
+        const matchesType =
+          type === "ALL" || transaction.transactionType === type;
         const matchesCategory =
           category === "All" || transaction.category === category;
         return matchesQuery && matchesType && matchesCategory;
