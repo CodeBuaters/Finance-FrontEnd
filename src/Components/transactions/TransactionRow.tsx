@@ -1,8 +1,11 @@
-import type { Transaction } from "../../../Types/transaction";
+import type { Transaction } from "../../Types/transaction";
 import TransactionCategoryBadge from "./TransactionCategoryBadge";
 
-const formatAmount = (amount: number) =>
-  `${amount > 0 ? "+" : "-"}$${Math.abs(amount).toFixed(2)}`;
+const formatAmount = (
+  transactionType: Transaction["transactionType"],
+  amount: number,
+) =>
+  `${transactionType === "INCOME" ? "+" : "-"}$${Math.abs(amount).toFixed(2)}`;
 
 export default function TransactionRow({
   transaction,
@@ -12,7 +15,7 @@ export default function TransactionRow({
   const amountTone =
     transaction.transactionType === "INCOME"
       ? "text-emerald-600"
-      : "text-slate-800";
+      : "text-red-700";
   return (
     <tr className="border-b border-slate-100 last:border-0 hover:bg-slate-50/60">
       <td className="whitespace-nowrap px-4 py-[15px] text-[11px] text-slate-500 sm:px-5">
@@ -30,7 +33,7 @@ export default function TransactionRow({
       <td
         className={`whitespace-nowrap px-4 py-[15px] text-right text-[12px] font-bold sm:px-5 ${amountTone}`}
       >
-        {formatAmount(transaction.amount)}
+        {formatAmount(transaction.transactionType, transaction.amount)}
       </td>
       <td className="px-4 py-[15px] sm:px-5">
         {transaction.transactionType === "TRANSFER" &&

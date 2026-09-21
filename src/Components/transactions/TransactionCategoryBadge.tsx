@@ -1,4 +1,4 @@
-import type { Category } from "../../../Types/category";
+import type { Category } from "../../Types/category";
 
 const categoryTone: Record<Category, string> = {
   FOOD: "bg-amber-100 text-amber-700",

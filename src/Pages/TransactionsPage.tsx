@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
 import type { Category } from "../Types/category";
 import type { Transaction } from "../Types/transaction";
-import TransactionTable from "../Components/navigation/transactions/TransactionsTable";
-import TransactionsPagination from "../Components/navigation/transactions/TransactionsPagination";
-import TransactionsToolbar from "../Components/navigation/transactions/TransactionsToolbar";
+import TransactionTable from "../Components/transactions/TransactionsTable";
+import TransactionsPagination from "../Components/transactions/TransactionsPagination";
+import TransactionsToolbar from "../Components/transactions/TransactionsToolbar";
 
 type TransactionFilter = "ALL" | Transaction["transactionType"];
 

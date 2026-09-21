@@ -1,5 +1,5 @@
-import type { Category } from "../../../Types/category";
-import type { Transaction } from "../../../Types/transaction";
+import type { Category } from "../../Types/category";
+import type { Transaction } from "../../Types/transaction";
 
 type TransactionFilter = "ALL" | Transaction["transactionType"];
 
