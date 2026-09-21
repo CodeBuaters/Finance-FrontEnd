@@ -1,23 +1,27 @@
 import { removeAccessToken, getAccessToken } from "../../Services/api";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-
+import { useUserContext } from "../../Context/userContextType";
+import { logoutUser } from "../../Services/authService";
 
 export default function TopBar() {
   const navigate = useNavigate();
 
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    getAccessToken() !== null
-  );
+  const { user, logout } = useUserContext();
+  const isLoggedIn = getAccessToken() !== null;
+  const username = user?.username || localStorage.getItem("username") || "User";
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+    } catch {
+      // Ignore failures (e.g. token already expired) - still clear local session below.
+    }
     removeAccessToken();
-    setIsLoggedIn(false);
+    logout();
     navigate("/login");
-  }
+  };
 
   return (
-
     <header className="flex h-[84px] items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-8">
       <div>
         <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-emerald-600">
@@ -42,24 +46,21 @@ export default function TopBar() {
           ♧
           <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500" />
         </button>
-        <div className="hidden items-center gap-2 sm:flex">
-          <span className="grid h-8 w-8 place-items-center rounded-full bg-cyan-500 text-[10px] font-bold text-white">
-            SL
-          </span>
-          <span className="text-[12px] font-semibold text-slate-700">
-            Sofia
-          </span>
-          <span className="text-xs text-slate-400">⌄</span>
-        </div>
 
         {isLoggedIn ? (
-          <button onClick={handleLogout}>
-            Logout
-          </button>
+          <div className="hidden items-center gap-2 sm:flex">
+            <span className="grid h-8 w-8 place-items-center rounded-full bg-cyan-500 text-[10px] font-bold text-white">
+              SL
+            </span>
+            <span className="text-[12px] font-semibold text-slate-700">
+              {username}
+            </span>
+            <span className="text-xs text-slate-400">⌄</span>
+
+            <button onClick={handleLogout}>Logout</button>
+          </div>
         ) : (
-          <button onClick={() => navigate("/login")}>
-            Login
-          </button>
+          <button onClick={() => navigate("/login")}>Login</button>
         )}
       </div>
     </header>

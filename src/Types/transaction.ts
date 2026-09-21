@@ -7,7 +7,7 @@ export interface Transaction {
   transactionDate: string;
   merchant: string;
   description?: string;
-  type: "INCOME" | "EXPENSE" | "TRANSFER";
+  transactionType: "INCOME" | "EXPENSE" | "TRANSFER";
   category?: Category | "OTHER";
   user: User;
 }

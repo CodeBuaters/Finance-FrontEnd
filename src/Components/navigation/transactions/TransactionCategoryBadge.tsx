@@ -11,7 +11,7 @@ const categoryTone: Record<Category, string> = {
   EDUCATION: "bg-cyan-100 text-cyan-700",
   SALARY: "bg-emerald-100 text-emerald-700",
   TRAVEL: "bg-sky-100 text-sky-700",
-  TRANSFER: "bg-slate-100 text-slate-700",
+  PERSONAL_CARE: "bg-fuchsia-100 text-fuchsia-700",
   OTHER: "bg-gray-100 text-gray-700",
 };
 

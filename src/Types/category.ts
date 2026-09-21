@@ -9,5 +9,5 @@ export type Category =
   | "EDUCATION"
   | "SALARY"
   | "TRAVEL"
-  | "TRANSFER"
+  | "PERSONAL_CARE"
   | "OTHER";

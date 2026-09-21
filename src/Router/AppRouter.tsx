@@ -12,12 +12,14 @@ import TransactionsPageProps from "../Pages/TransactionsPage";
 import BudgetsPage from "../Pages/BudgetsPage";
 import SettingsPage from "../Pages/SettingsPage";
 import ImportCSVPage from "../Pages/ImportCSVPage";
+import CategoriesPage from "../Pages/CategoriesPage";
 import LoginPage from "../Pages/LoginPage";
 import AuthLayout from "../Layouts/AuthLayout";
 import AppLayout from "../Layouts/AppLayout";
 import { getAccessToken } from "../Services/api";
 import type { Transaction } from "../Types/transaction";
-import { getTransaction } from "../Services/transactionService";
+import { getTransactionsByUserId } from "../Services/transactionService";
+import { useUserContext } from "../Context/userContextType";
 
 const isAuthenticated = () => {
   return getAccessToken() !== null;
@@ -29,10 +31,13 @@ const ProtectedRoute = () => {
 
 function TransactionsRoute() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const { user } = useUserContext();
 
   useEffect(() => {
-    getTransaction().then(setTransactions);
-  }, []);
+    if (user?.id === undefined) return;
+
+    getTransactionsByUserId(user.id).then(setTransactions);
+  }, [user?.id]);
 
   return <TransactionsPageProps transactions={transactions} />;
 }
@@ -51,6 +56,7 @@ export default function AppRouter() {
             <Route path="/" element={<DashboardPage />} />
             <Route path="/transactions" element={<TransactionsRoute />} />
             <Route path="/budgets" element={<BudgetsPage />} />
+            <Route path="/categories" element={<CategoriesPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/import-csv" element={<ImportCSVPage />} />
           </Route>
