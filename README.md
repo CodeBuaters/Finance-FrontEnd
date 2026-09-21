@@ -4,6 +4,8 @@ React + TypeScript frontend for the **FinSight** personal finance dashboard.
 
 The frontend provides a modern dashboard for viewing personal income, expenses, budgets, and imported bank transactions.
 
+Backlog: https://github.com/orgs/CodeBuaters/projects/2/views/1
+
 ## Tech Stack
 
 * React 19
