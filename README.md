@@ -1,6 +1,6 @@
 # FinSight Frontend
 
-Frontend is deployed with Render at [](https://finance-frontend-ztla.onrender.com/)
+Frontend is deployed at [Render](https://finance-frontend-ztla.onrender.com/)
 
 React + TypeScript frontend for the **FinSight** personal finance dashboard.
 
