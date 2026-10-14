@@ -1,30 +1,28 @@
 import { useState, useRef } from "react";
-import { Upload, FileText, CheckCircle, X } from "lucide-react";
+import { Upload, FileText, CheckCircle, AlertCircle, X } from "lucide-react";
 
-export default function UploadCard() {
-  const [phase, setPhase] = useState<"idle" | "uploading" | "done">("idle");
+export type UploadPhase = "idle" | "uploading" | "done" | "error";
+
+interface UploadCardProps {
+  phase: UploadPhase;
+  fileName: string | null;
+  progress: number;
+  message: string | null;
+  onFileSelect: (file: File) => void;
+  onReset: () => void;
+}
+
+export default function UploadCard({
+  phase,
+  fileName,
+  progress,
+  message,
+  onFileSelect,
+  onReset,
+}: UploadCardProps) {
   const [dragging, setDragging] = useState(false);
-  const [fileName, setFileName] = useState<string | null>(null);
-  const [progress, setProgress] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleFile = (name: string) => {
-    setFileName(name);
-    setPhase("uploading");
-    setProgress(0);
-
-    // Simulate upload progress
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setPhase("done");
-          return 100;
-        }
-        return prev + 10;
-      });
-    }, 300);
-  };
   return (
     <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_1px_4px_rgba(0,0,0,0.05)] p-6">
       <h2 className="text-base font-semibold text-slate-900 mb-1">
@@ -46,10 +44,10 @@ export default function UploadCard() {
             e.preventDefault();
             setDragging(false);
             const f = e.dataTransfer.files[0];
-            if (f) handleFile(f.name);
+            if (f) onFileSelect(f);
           }}
           onClick={() => inputRef.current?.click()}
-          className={`border-2 border-dashed rounded-2xl flex flex-col items-center justify-center py-14 cursor-pointer transition-all
+          className={`border-2 border-dashed rounded-2xl flex flex-col items-center justify-center px-4 py-14 text-center cursor-pointer transition-all
               ${dragging ? "border-emerald-400 bg-emerald-50" : "border-slate-200 hover:border-emerald-300 hover:bg-emerald-50/40"}`}
         >
           <div className="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center mb-4">
@@ -77,7 +75,9 @@ export default function UploadCard() {
             className="hidden"
             onChange={(e) => {
               const f = e.target.files?.[0];
-              if (f) handleFile(f.name);
+              // Clear so selecting the same file again still fires onChange
+              e.target.value = "";
+              if (f) onFileSelect(f);
             }}
           />
         </div>
@@ -91,12 +91,13 @@ export default function UploadCard() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-slate-800 truncate">
-                {fileName || "transactions.csv"}
+                {fileName}
               </p>
               <p className="text-xs text-slate-400">Importing...</p>
             </div>
             <button
-              onClick={() => setPhase("idle")}
+              type="button"
+              onClick={onReset}
               className="text-slate-400 hover:text-slate-600"
             >
               <X size={16} />
@@ -117,20 +118,39 @@ export default function UploadCard() {
       {phase === "done" && (
         <div className="border border-emerald-200 bg-emerald-50 rounded-2xl p-5 flex items-center gap-4">
           <CheckCircle size={24} className="text-emerald-600 shrink-0" />
-          <div>
+          <div className="min-w-0">
             <p className="text-sm font-semibold text-emerald-800">
               Import successful!
             </p>
             <p className="text-xs text-emerald-600">
-              {fileName || "transactions.csv"} — 6 transactions imported, 4
-              auto-categorized
+              {fileName} — {message}
             </p>
           </div>
           <button
-            onClick={() => setPhase("idle")}
-            className="ml-auto text-xs text-emerald-700 hover:underline"
+            type="button"
+            onClick={onReset}
+            className="ml-auto shrink-0 text-xs text-emerald-700 hover:underline"
           >
             Import another
+          </button>
+        </div>
+      )}
+
+      {phase === "error" && (
+        <div className="border border-red-200 bg-red-50 rounded-2xl p-5 flex items-center gap-4">
+          <AlertCircle size={24} className="text-red-600 shrink-0" />
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-red-800">Import failed</p>
+            <p className="text-xs text-red-600">
+              {fileName} — {message}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onReset}
+            className="ml-auto shrink-0 text-xs text-red-700 hover:underline"
+          >
+            Try again
           </button>
         </div>
       )}
