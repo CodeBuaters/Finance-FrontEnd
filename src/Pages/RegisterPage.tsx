@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { RegisterRequest } from "../Types/registerRequest";
 import { registerUser } from "../Services/authService";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function RegisterPage() {
 
@@ -35,96 +35,89 @@ export default function RegisterPage() {
 
   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="bg-white p-8 rounded shadow-md">
-        <h1 className="text-2xl font-bold mb-4">Register</h1>
+  // Same styles as on the login page
+  const labelClass = "flex flex-col gap-1.5 text-sm font-medium text-slate-700";
+  const inputClass =
+    "rounded-lg border border-slate-200 px-3 py-2.5 text-sm font-normal outline-none focus:border-emerald-500";
 
-        <form onSubmit={handleSubmit}>
-          {error && (
-            <p>{error}</p>
-          )}
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="username">Username: </label>
+  return (
+    <div className="w-full max-w-sm rounded-2xl border border-slate-200 p-8 shadow-sm">
+      <h1 className="text-xl font-bold text-slate-900">Create an account</h1>
+      <p className="mb-6 mt-1 text-[15px] tracking-tight text-slate-500">
+        Start tracking your money
+      </p>
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        {error && (
+          <p className="rounded-lg bg-red-50 p-3 text-sm text-red-600">{error}</p>
+        )}
+        <label className={labelClass}>
+          Username
+          <input
+            className={inputClass}
+            type="text"
+            placeholder="johndoe"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+        </label>
+        {/* First and last name side by side */}
+        <div className="grid grid-cols-2 gap-3">
+          <label className={labelClass}>
+            First name
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="username"
+              className={inputClass}
               type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </div>
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="firstName">First name: </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="firstName"
-              type="text"
-              placeholder="First name"
+              placeholder="John"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
             />
-          </div>
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="lastName">Last name: </label>
+          </label>
+          <label className={labelClass}>
+            Last name
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="lastName"
+              className={inputClass}
               type="text"
-              placeholder="Last name"
+              placeholder="Doe"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
             />
-          </div>
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="email">Email: </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="email"
-              type="text"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="password">Password: </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="password"
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <div className="flex gap-10">
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              type="submit">
-              Register
-            </button>
-            <button
-              className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              type="button"
-              onClick={() => navigate("/login")}
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      </div>
+          </label>
+        </div>
+        <label className={labelClass}>
+          Email
+          <input
+            className={inputClass}
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </label>
+        <label className={labelClass}>
+          Password
+          <input
+            className={inputClass}
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </label>
+        <button
+          className="mt-2 rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"
+          type="submit"
+        >
+          Create account
+        </button>
+      </form>
+
+      <p className="mt-6 text-center text-sm text-slate-500">
+        Already have an account?{" "}
+        <Link to="/login" className="font-semibold text-slate-900 hover:underline">
+          Sign in
+        </Link>
+      </p>
     </div>
   );
 }
