@@ -11,7 +11,8 @@ export default function KPICard({
   label: string;
   value: string;
   change: string;
-  positive: boolean;
+  // Leave undefined when there is no trend to show (e.g. no data for last month)
+  positive?: boolean;
   icon: React.ElementType;
   accent: string;
 }) {
@@ -28,9 +29,10 @@ export default function KPICard({
       </div>
       <p className="text-2xl font-bold text-slate-900 mb-1">{value}</p>
       <div
-        className={`flex items-center gap-1 text-xs font-medium ${positive ? "text-emerald-600" : "text-red-500"}`}
+        className={`flex items-center gap-1 text-xs font-medium ${positive === undefined ? "text-slate-400" : positive ? "text-emerald-600" : "text-red-500"}`}
       >
-        {positive ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+        {positive !== undefined &&
+          (positive ? <TrendingUp size={12} /> : <TrendingDown size={12} />)}
         {change}
       </div>
     </div>
