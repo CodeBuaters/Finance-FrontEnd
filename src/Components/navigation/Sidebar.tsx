@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { useUserContext } from "../../Context/userContextType";
+import { getInitials } from "../../Utils/user";
 import Logo from "./Logo";
 
 type SidebarProps = {
@@ -8,10 +9,8 @@ type SidebarProps = {
 };
 
 export default function Sidebar({ open, onClose }: SidebarProps) {
-  const user = useUserContext();
-  const firstName = user.user?.firstName || "Sofia";
-  const lastName = user.user?.lastName || "Larsson";
-  const email = user.user?.email || "";
+  const { user } = useUserContext();
+  const fullName = `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim();
 
   return (
     // Small screens: hidden, or floating over the page when open. Large screens (lg): always visible
@@ -22,9 +21,6 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
         <Logo />
       </div>
       <nav className="flex-1 px-3 py-5">
-        <p className="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">
-          Workspace
-        </p>
         {[
           ["▦", "Dashboard", "/"],
           ["↔", "Transactions", "/transactions"],
@@ -52,15 +48,15 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
       <div className="border-t border-slate-100 p-5">
         <div className="flex items-center gap-3">
           <span className="grid h-9 w-9 place-items-center rounded-full bg-cyan-500 text-[11px] font-bold text-white">
-            SL
+            {getInitials(user)}
           </span>
           <div className="min-w-0">
             <p className="truncate text-[12px] font-semibold text-slate-800">
-              {firstName || "Sofia"} {lastName || "Larsson"}
+              {fullName || user?.username}
             </p>
-            <p className="truncate text-[11px] text-slate-400">
-              {email || "example@example.com"}
-            </p>
+            {user?.email && (
+              <p className="truncate text-[11px] text-slate-400">{user.email}</p>
+            )}
           </div>
         </div>
       </div>

@@ -2,6 +2,7 @@ import { removeAccessToken, getAccessToken } from "../../Services/api";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../../Context/userContextType";
 import { logoutUser } from "../../Services/authService";
+import { getInitials } from "../../Utils/user";
 
 export default function TopBar({ onMenuClick }: { onMenuClick: () => void }) {
   const navigate = useNavigate();
@@ -38,30 +39,14 @@ export default function TopBar({ onMenuClick }: { onMenuClick: () => void }) {
         </div>
       </div>
       <div className="flex items-center gap-4">
-        <label className="hidden h-10 w-[205px] items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 text-[12px] text-slate-400 sm:flex">
-          <span className="text-base">⌕</span>
-          <input
-            className="w-full bg-transparent outline-none placeholder:text-slate-400"
-            placeholder="Search transactions..."
-          />
-        </label>
-        <button
-          aria-label="Notifications"
-          className="relative grid h-9 w-9 place-items-center rounded-lg border border-slate-200 text-sm text-slate-500 hover:bg-slate-50"
-        >
-          ♧
-          <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500" />
-        </button>
-
         {isLoggedIn ? (
           <div className="hidden items-center gap-2 sm:flex">
             <span className="grid h-8 w-8 place-items-center rounded-full bg-cyan-500 text-[10px] font-bold text-white">
-              SL
+              {getInitials(user)}
             </span>
             <span className="text-[12px] font-semibold text-slate-700">
               {username}
             </span>
-            <span className="text-xs text-slate-400">⌄</span>
 
             <button onClick={handleLogout}>Logout</button>
           </div>
