@@ -14,16 +14,23 @@ import {
 } from "../Utils/date";
 import { getTransactionsByUserId } from "./transactionService";
 
+// Imported expenses are stored with a negative amount, so the backend's expense
+// totals can come back negative. Everything below works with positive expense sums.
 export async function getDashboardSummary(): Promise<DashboardSummary> {
   const response = await api.get<DashboardSummary>("/api/dashboard/summary");
+  const income = Math.abs(response.data.income);
+  const expenses = Math.abs(response.data.expenses);
 
-  return response.data;
+  return { ...response.data, income, expenses, balance: income - expenses };
 }
 
 export async function getMonthlySpending(): Promise<MonthlySpending[]> {
   const response = await api.get<MonthlySpending[]>("/api/dashboard/monthly");
 
-  return response.data;
+  return response.data.map((month) => ({
+    ...month,
+    total: Math.abs(month.total),
+  }));
 }
 
 export async function getExpensesByCategory(): Promise<CategorySpending[]> {
@@ -31,7 +38,10 @@ export async function getExpensesByCategory(): Promise<CategorySpending[]> {
     "/api/dashboard/categories",
   );
 
-  return response.data;
+  return response.data.map((category) => ({
+    ...category,
+    total: Math.abs(category.total),
+  }));
 }
 
 export type KpiValue = {
