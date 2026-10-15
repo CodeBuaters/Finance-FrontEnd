@@ -31,3 +31,11 @@ select {
 #root {
   min-height: 100vh;
 }
+
+/* Expense chart legend rows */
+@keyframes legend-in {
+  from {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+}

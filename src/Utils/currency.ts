@@ -23,3 +23,7 @@ export const getSignedAmount = (
       return transaction.amount;
   }
 };
+
+// Whole dollars for compact chart legends, e.g. "$1800"
+export const formatWholeCurrency = (amount: number) =>
+  `${amount < 0 ? "-" : ""}$${Math.round(Math.abs(amount))}`;

@@ -1,7 +1,9 @@
 import { ArrowDownRight, ArrowUpRight, Wallet } from "lucide-react";
+import ExpensePieChart from "../Components/dashboard/ExpensePieChart";
 import KPICard from "../Components/dashboard/KPICard";
 import { useUserContext } from "../Context/userContextType";
 import { useDashboardKpis } from "../Hooks/useDashboardKpis";
+import { useExpensesByCategory } from "../Hooks/useExpensesByCategory";
 import {
   formatChangePercent,
   type KpiValue,
@@ -19,6 +21,7 @@ const getTrend = (kpi: KpiValue, lowerIsBetter = false) =>
 export default function DashboardPage() {
   const { user } = useUserContext();
   const { kpis, isLoading, error } = useDashboardKpis();
+  const { data: categorySpending } = useExpensesByCategory();
 
   return (
     <section className="mx-auto max-w-[1100px]">
@@ -59,6 +62,13 @@ export default function DashboardPage() {
             icon={ArrowDownRight}
             accent="#ef4444"
           />
+        </div>
+      )}
+
+      {/* Chart row: two columns on large screens, more charts go next to this one */}
+      {categorySpending && (
+        <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <ExpensePieChart data={categorySpending} />
         </div>
       )}
     </section>
