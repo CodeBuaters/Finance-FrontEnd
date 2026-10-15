@@ -1,4 +1,10 @@
+import { api } from "./api";
 import type { Transaction } from "../Types/transaction";
+import type {
+  CategorySpending,
+  DashboardSummary,
+  MonthlySpending,
+} from "../Types/dashboard";
 import { getSignedAmount } from "../Utils/currency";
 import {
   getPreviousMonth,
@@ -7,6 +13,26 @@ import {
   parseTransactionDate,
 } from "../Utils/date";
 import { getTransactionsByUserId } from "./transactionService";
+
+export async function getDashboardSummary(): Promise<DashboardSummary> {
+  const response = await api.get<DashboardSummary>("/api/dashboard/summary");
+
+  return response.data;
+}
+
+export async function getMonthlySpending(): Promise<MonthlySpending[]> {
+  const response = await api.get<MonthlySpending[]>("/api/dashboard/monthly");
+
+  return response.data;
+}
+
+export async function getExpensesByCategory(): Promise<CategorySpending[]> {
+  const response = await api.get<CategorySpending[]>(
+    "/api/dashboard/categories",
+  );
+
+  return response.data;
+}
 
 export type KpiValue = {
   value: number;
@@ -24,11 +50,6 @@ const sumBy = (
   transactions: Transaction[],
   getAmount: (transaction: Transaction) => number,
 ) => transactions.reduce((total, transaction) => total + getAmount(transaction), 0);
-
-const getTransactionsInMonth = (transactions: Transaction[], month: Date) =>
-  transactions.filter((transaction) =>
-    isSameMonth(parseTransactionDate(transaction.transactionDate), month),
-  );
 
 export const calculateChangePercent = (current: number, previous: number) =>
   previous === 0 ? null : ((current - previous) / Math.abs(previous)) * 100;
@@ -49,39 +70,40 @@ export const calculateMonthlyIncome = (
   month: Date,
 ) =>
   sumBy(
-    getTransactionsInMonth(transactions, month).filter(
-      (transaction) => transaction.transactionType === "INCOME",
+    transactions.filter(
+      (transaction) =>
+        transaction.transactionType === "INCOME" &&
+        isSameMonth(parseTransactionDate(transaction.transactionDate), month),
     ),
     (transaction) => Math.abs(transaction.amount),
   );
 
-export const calculateMonthlyExpenses = (
-  transactions: Transaction[],
-  month: Date,
-) =>
-  sumBy(
-    getTransactionsInMonth(transactions, month).filter(
-      (transaction) => transaction.transactionType === "EXPENSE",
-    ),
-    (transaction) => Math.abs(transaction.amount),
-  );
+// The monthly endpoint is ordered oldest first, so the last two entries are this and last month
+const getMonthlySpendingChange = (monthlySpending: MonthlySpending[]) => {
+  const [previous, current] = monthlySpending.slice(-2);
+  return previous && current
+    ? calculateChangePercent(current.total, previous.total)
+    : null;
+};
 
+// Income and expenses come from the backend. The backend has no all-time balance
+// or monthly income history yet, so those are still calculated from the transactions.
 export function calculateDashboardKpis(
+  summary: DashboardSummary,
+  monthlySpending: MonthlySpending[],
   transactions: Transaction[],
   referenceDate = new Date(),
 ): DashboardKpis {
-  const previousMonth = getPreviousMonth(referenceDate);
-
   const balance = calculateBalance(transactions);
   // Balance at the end of last month = everything before this month started
   const previousBalance = calculateBalance(
     transactions,
     getStartOfMonth(referenceDate),
   );
-  const income = calculateMonthlyIncome(transactions, referenceDate);
-  const previousIncome = calculateMonthlyIncome(transactions, previousMonth);
-  const expenses = calculateMonthlyExpenses(transactions, referenceDate);
-  const previousExpenses = calculateMonthlyExpenses(transactions, previousMonth);
+  const previousIncome = calculateMonthlyIncome(
+    transactions,
+    getPreviousMonth(referenceDate),
+  );
 
   return {
     totalBalance: {
@@ -89,19 +111,23 @@ export function calculateDashboardKpis(
       changePercent: calculateChangePercent(balance, previousBalance),
     },
     monthlyIncome: {
-      value: income,
-      changePercent: calculateChangePercent(income, previousIncome),
+      value: summary.income,
+      changePercent: calculateChangePercent(summary.income, previousIncome),
     },
     monthlyExpenses: {
-      value: expenses,
-      changePercent: calculateChangePercent(expenses, previousExpenses),
+      value: summary.expenses,
+      changePercent: getMonthlySpendingChange(monthlySpending),
     },
   };
 }
 
 export async function getDashboardKpis(userId: number): Promise<DashboardKpis> {
-  const transactions = await getTransactionsByUserId(userId);
-  return calculateDashboardKpis(transactions);
+  const [summary, monthlySpending, transactions] = await Promise.all([
+    getDashboardSummary(),
+    getMonthlySpending(),
+    getTransactionsByUserId(userId),
+  ]);
+  return calculateDashboardKpis(summary, monthlySpending, transactions);
 }
 
 export const formatChangePercent = (changePercent: number | null) =>
