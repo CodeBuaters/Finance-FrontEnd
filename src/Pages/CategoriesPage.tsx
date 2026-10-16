@@ -10,6 +10,8 @@ import { useUserContext } from "../Context/userContextType";
 export default function CategoriesPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<Record<string, number>>({});
+  const [confirmedTransactions, setConfirmedTransactions] = useState<string[]>([]);
   const { user } = useUserContext();
   const [newCategoryName, setNewCategoryName] = useState("");
   const [isAddingCategory, setIsAddingCategory] = useState(false);
@@ -51,6 +53,35 @@ export default function CategoriesPage() {
       console.error("Category creation failed:", error);
     } finally {
       setIsAddingCategory(false);
+    }
+  }
+
+  async function handleConfirm(transaction: Transaction) {
+    const categoryId =
+      selectedCategories[transaction.id] ??
+      transaction.category?.id;
+
+    if (categoryId === undefined) return;
+
+    try {
+      const updatedTransaction = await updateTransactionCategory(
+        transaction.id,
+        categoryId,
+      );
+
+      setTransactions((currentTransactions) =>
+        currentTransactions.map((item) =>
+          item.id === updatedTransaction.id ? updatedTransaction : item,
+        ),
+      );
+
+      setConfirmedTransactions((current) =>
+        current.includes(transaction.id)
+          ? current
+          : [...current, transaction.id],
+      );
+    } catch (error) {
+      console.error("Category confirmation failed:", error);
     }
   }
 
@@ -210,6 +241,9 @@ export default function CategoriesPage() {
               <th className="px-5 py-3.5 text-left text-xs font-medium text-slate-400">
                 Category
               </th>
+              <th className="px-5 py-3.5 text-left text-xs font-medium text-slate-400">
+                Confirm
+              </th>
             </tr>
           </thead>
 
@@ -232,29 +266,26 @@ export default function CategoriesPage() {
                 </td>
 
                 <td className="px-5 py-4">
+
                   <select
-                    value={transaction.category?.id ?? ""}
-                    onChange={async (event) => {
+                    value={
+                      selectedCategories[transaction.id] ??
+                      transaction.category?.id ??
+                      ""
+                    }
+                    onChange={(event) => {
                       const categoryId = Number(event.target.value);
 
-                      try {
-                        const updatedTransaction = await updateTransactionCategory(
-                          transaction.id,
-                          categoryId,
-                        );
-
-                        setTransactions((currentTransactions) =>
-                          currentTransactions.map((item) =>
-                            item.id === updatedTransaction.id ? updatedTransaction : item,
-                          ),
-                        );
-
-                        console.log("Category updated:", updatedTransaction);
-                      } catch (error) {
-                        console.error("Category update failed:", error);
-                      }
+                      setSelectedCategories((current) => ({
+                        ...current,
+                        [transaction.id]: categoryId,
+                      }));
+                      setConfirmedTransactions((current) =>
+                        current.filter((id) => id !== transaction.id)
+                      );
                     }}
-                    className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-sm text-slate-700"
+
+                    className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-sm text-slate-700 disabled:opacity-50"
                   >
                     {categories.map((category) => (
                       <option key={category.id} value={category.id}>
@@ -262,6 +293,21 @@ export default function CategoriesPage() {
                       </option>
                     ))}
                   </select>
+                </td>
+                <td className="px-5 py-4">
+                  {confirmedTransactions.includes(transaction.id) ? (
+                    <span className="text-sm font-medium text-green-700">
+                      Confirmed
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => handleConfirm(transaction)}
+                      className="rounded-lg bg-green-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-700"
+                    >
+                      Confirm
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
