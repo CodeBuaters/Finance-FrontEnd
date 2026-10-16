@@ -37,7 +37,7 @@ export default function TransactionsPage({
         const matchesType =
           type === "ALL" || transaction.transactionType === type;
         const matchesCategory =
-          category === "All" || transaction.category === category;
+          category === "All" || String(transaction.category?.id) === category;
         return matchesQuery && matchesType && matchesCategory;
       }),
     [category, query, transactions, type],

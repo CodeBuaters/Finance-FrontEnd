@@ -1,6 +1,6 @@
 import type { Category } from "../../../Types/category";
 
-const categoryTone: Record<Category, string> = {
+const categoryTone: Record<string, string> = {
   FOOD: "bg-amber-100 text-amber-700",
   TRANSPORTATION: "bg-blue-100 text-blue-700",
   HOUSING: "bg-violet-100 text-violet-700",
@@ -18,12 +18,14 @@ const categoryTone: Record<Category, string> = {
 export default function TransactionCategoryBadge({
   category,
 }: {
-  category?: Category | "OTHER";
+  category?: Category | null;
 }) {
-  const label = category ?? "OTHER";
+  const label = category?.name ?? "OTHER";
+  const tone = categoryTone[label.toUpperCase()] ?? categoryTone.OTHER;
+
   return (
     <span
-      className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-semibold ${categoryTone[label]}`}
+      className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-semibold ${tone}`}
     >
       {label}
     </span>
