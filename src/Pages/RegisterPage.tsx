@@ -29,7 +29,7 @@ export default function RegisterPage() {
       //console.log testausta varten
       console.log(response);
       navigate("/login");
-    } catch (error) {
+    } catch {
       setError("Username or email is already in use!")
     }
 
