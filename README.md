@@ -1,5 +1,8 @@
 # FinSight Frontend
 
+[![Frontend CI](https://github.com/CodeBuaters/Finance-FrontEnd/actions/workflows/frontend-ci.yml/badge.svg)](https://github.com/CodeBuaters/Finance-FrontEnd/actions/workflows/frontend-ci.yml)
+
+
 Frontend is deployed at [Render](https://finance-frontend-ztla.onrender.com/)
 
 React + TypeScript frontend for the **FinSight** personal finance dashboard.
