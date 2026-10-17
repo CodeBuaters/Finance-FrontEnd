@@ -1,4 +1,20 @@
-export type Category =
+export type Category = {
+  id: number;
+  name: string;
+  default: boolean;
+};
+
+
+
+
+
+
+
+
+
+
+
+/* export type Category =
   | "FOOD"
   | "TRANSPORTATION"
   | "HOUSING"
@@ -10,4 +26,4 @@ export type Category =
   | "SALARY"
   | "TRAVEL"
   | "PERSONAL_CARE"
-  | "OTHER";
+  | "OTHER"; */

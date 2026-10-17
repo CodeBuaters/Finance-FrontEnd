@@ -51,9 +51,21 @@ export default function TransactionsToolbar({
         className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-[12px] text-slate-600 outline-none"
       >
         <option>All</option>
-        {categories.map((itemCategory) => (
-          <option key={itemCategory}>{itemCategory}</option>
-        ))}
+        {categories.map((itemCategory) => {
+          if (itemCategory === "OTHER") {
+            return (
+              <option key="OTHER" value="OTHER">
+                Ohter
+              </option>
+            );
+          }
+
+          return (
+            <option key={itemCategory.id} value={String(itemCategory.id)}>
+              {itemCategory.name}
+            </option>
+          )
+        })}
       </select>
     </div>
   );
