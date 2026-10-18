@@ -17,15 +17,15 @@ export default function TransactionsPage({
   const [query, setQuery] = useState("");
   const [type, setType] = useState<TransactionFilter>("ALL");
   const [category, setCategory] = useState("All");
+  // Unique categories for the filter, by id: every transaction has its own category
+  // object, and uncategorized transactions have category null
   const categories = [
-    ...new Set(
+    ...new Map(
       transactions
         .map(({ category: itemCategory }) => itemCategory)
-        .filter(
-          (itemCategory): itemCategory is Category =>
-            itemCategory !== undefined,
-        ),
-    ),
+        .filter((itemCategory): itemCategory is Category => itemCategory != null)
+        .map((itemCategory) => [itemCategory.id, itemCategory]),
+    ).values(),
   ];
   const filteredTransactions = useMemo(
     () =>
