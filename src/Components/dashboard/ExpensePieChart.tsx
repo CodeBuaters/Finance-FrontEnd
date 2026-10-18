@@ -5,6 +5,7 @@ import {
   getCategoryColor,
 } from "../../Utils/categoryChart";
 import { formatCurrency, formatWholeCurrency } from "../../Utils/currency";
+import DashboardCard from "./DashboardCard";
 
 type Slice = { id: number; name: string; value: number; fill: string };
 
@@ -47,10 +48,7 @@ export default function ExpensePieChart({
   const total = slices.reduce((sum, slice) => sum + slice.value, 0);
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-[0_1px_4px_rgba(0,0,0,0.06)] border border-slate-100">
-      <h3 className="text-lg font-bold text-slate-800 mb-4">
-        Expenses by Category
-      </h3>
+    <DashboardCard title="Expenses by Category">
 
       {slices.length === 0 ? (
         <p className="py-10 text-center text-sm text-slate-400">
@@ -105,6 +103,6 @@ export default function ExpensePieChart({
           </ul>
         </div>
       )}
-    </div>
+    </DashboardCard>
   );
 }

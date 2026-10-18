@@ -11,6 +11,7 @@ import { getRecentMonthlySpending } from "../../Services/dashboardService";
 import type { MonthlySpending } from "../../Types/dashboard";
 import { formatCurrency, formatWholeCurrency } from "../../Utils/currency";
 import { formatMonthLong, formatMonthShort } from "../../Utils/date";
+import DashboardCard from "./DashboardCard";
 
 const BAR_COLOR = "#16a34a";
 
@@ -40,13 +41,15 @@ export default function MonthlySpendingChart({
   const months = getRecentMonthlySpending(data);
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-[0_1px_4px_rgba(0,0,0,0.06)] border border-slate-100">
-      <h3 className="text-lg font-bold text-slate-800 mb-4">
-        Monthly Spending
-        {months.length > 0 &&
-          ` (${months.length} ${months.length === 1 ? "month" : "months"})`}
-      </h3>
-
+    <DashboardCard
+      title={
+        <>
+          Monthly Spending
+          {months.length > 0 &&
+            ` (${months.length} ${months.length === 1 ? "month" : "months"})`}
+        </>
+      }
+    >
       {months.length === 0 ? (
         <p className="py-10 text-center text-sm text-slate-400">
           No spending in the last 6 months yet.
@@ -89,6 +92,6 @@ export default function MonthlySpendingChart({
           </ResponsiveContainer>
         </div>
       )}
-    </div>
+    </DashboardCard>
   );
 }

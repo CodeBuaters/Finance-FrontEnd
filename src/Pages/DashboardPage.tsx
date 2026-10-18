@@ -2,10 +2,12 @@ import { ArrowDownRight, ArrowUpRight, Wallet } from "lucide-react";
 import ExpensePieChart from "../Components/dashboard/ExpensePieChart";
 import KPICard from "../Components/dashboard/KPICard";
 import MonthlySpendingChart from "../Components/dashboard/MonthlySpendingChart";
+import RecentTransactionsCard from "../Components/dashboard/RecentTransactionsCard";
 import { useUserContext } from "../Context/userContextType";
 import { useDashboardKpis } from "../Hooks/useDashboardKpis";
 import { useExpensesByCategory } from "../Hooks/useExpensesByCategory";
 import { useMonthlySpending } from "../Hooks/useMonthlySpending";
+import { useTransactions } from "../Hooks/useTransactions";
 import {
   formatChangePercent,
   type KpiValue,
@@ -22,9 +24,16 @@ const getTrend = (kpi: KpiValue, lowerIsBetter = false) =>
 
 export default function DashboardPage() {
   const { user } = useUserContext();
-  const { kpis, isLoading, error } = useDashboardKpis();
+  // Each dataset is fetched once here and shared by the widgets that need it
+  const monthlySpendingResult = useMonthlySpending();
+  const transactionsResult = useTransactions();
+  const { kpis, isLoading, error } = useDashboardKpis(
+    monthlySpendingResult,
+    transactionsResult,
+  );
   const { data: categorySpending } = useExpensesByCategory();
-  const { data: monthlySpending } = useMonthlySpending();
+  const monthlySpending = monthlySpendingResult.data;
+  const transactions = transactionsResult.data;
 
   return (
     <section className="mx-auto max-w-[1100px]">
@@ -73,6 +82,12 @@ export default function DashboardPage() {
         <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
           {monthlySpending && <MonthlySpendingChart data={monthlySpending} />}
           {categorySpending && <ExpensePieChart data={categorySpending} />}
+        </div>
+      )}
+
+      {transactions && (
+        <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <RecentTransactionsCard transactions={transactions} />
         </div>
       )}
     </section>

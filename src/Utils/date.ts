@@ -33,3 +33,9 @@ export const formatMonthLong = (value: string) =>
     month: "long",
     year: "numeric",
   });
+
+// Compact "MM-DD" date for dashboard tables, e.g. "08-28"
+export const formatMonthDay = (value: string) => {
+  const date = parseTransactionDate(value);
+  return `${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+};

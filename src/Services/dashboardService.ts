@@ -12,7 +12,6 @@ import {
   isSameMonth,
   parseTransactionDate,
 } from "../Utils/date";
-import { getTransactionsByUserId } from "./transactionService";
 
 // Imported expenses are stored with a negative amount, so the backend's expense
 // totals can come back negative. Everything below works with positive expense sums.
@@ -55,6 +54,21 @@ export const getRecentMonthlySpending = (
   const firstWithSpending = recent.findIndex((month) => month.total > 0);
   return firstWithSpending === -1 ? [] : recent.slice(firstWithSpending);
 };
+
+// Newest transactions first. Transactions on the same day are ordered by id, so the
+// most recently added one comes first.
+export const getRecentTransactions = (
+  transactions: Transaction[],
+  limit: number,
+) =>
+  [...transactions]
+    .sort(
+      (a, b) =>
+        parseTransactionDate(b.transactionDate).getTime() -
+          parseTransactionDate(a.transactionDate).getTime() ||
+        Number(b.id) - Number(a.id),
+    )
+    .slice(0, limit);
 
 export type KpiValue = {
   value: number;
@@ -141,15 +155,6 @@ export function calculateDashboardKpis(
       changePercent: getMonthlySpendingChange(monthlySpending),
     },
   };
-}
-
-export async function getDashboardKpis(userId: number): Promise<DashboardKpis> {
-  const [summary, monthlySpending, transactions] = await Promise.all([
-    getDashboardSummary(),
-    getMonthlySpending(),
-    getTransactionsByUserId(userId),
-  ]);
-  return calculateDashboardKpis(summary, monthlySpending, transactions);
 }
 
 export const formatChangePercent = (changePercent: number | null) =>
