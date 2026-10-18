@@ -8,6 +8,8 @@ export interface Transaction {
   merchant: string;
   description?: string;
   transactionType: "INCOME" | "EXPENSE" | "TRANSFER";
-  category?: Category | "OTHER";
+  category?: Category | null;
   user: User;
 }
+
+/* category?: Category | "OTHER"; */

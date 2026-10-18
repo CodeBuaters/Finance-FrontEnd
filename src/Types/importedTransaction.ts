@@ -8,9 +8,18 @@ export type ImportedTransaction = Omit<Transaction, "id" | "user"> & {
 
 export type ImportStatus = "categorized" | "needs-review";
 
+
 export const getImportStatus = (
+  transaction: ImportedTransaction,
+): ImportStatus =>
+  transaction.category && transaction.category.name !== "Other"
+    ? "categorized"
+    : "needs-review";
+
+
+/* export const getImportStatus = (
   transaction: ImportedTransaction,
 ): ImportStatus =>
   transaction.category && transaction.category !== "OTHER"
     ? "categorized"
-    : "needs-review";
+    : "needs-review"; */

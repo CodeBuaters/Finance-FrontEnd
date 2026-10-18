@@ -11,7 +11,17 @@ export async function getTransactionsByUserId(
   userId: number,
 ): Promise<Transaction[]> {
   const response = await api.get<Transaction[]>(
-    `/api/user/${userId}/transactions`,
+    `/api/user/${userId}/transactions`
+  );
+
+  return response.data;
+}
+
+export async function updateTransactionCategory(
+  transactionId: string,
+  categoryId: number,
+): Promise<Transaction> {
+  const response = await api.put<Transaction>(`/api/transactions/${transactionId}/category`, { categoryId },
   );
 
   return response.data;
