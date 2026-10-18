@@ -20,8 +20,10 @@ export default function TransactionCategoryBadge({
 }: {
   category?: Category | null;
 }) {
-  const label = category?.name ?? "OTHER";
-  const tone = categoryTone[label.toUpperCase()] ?? categoryTone.OTHER;
+  const label = category?.name ?? "Other";
+  // Backend names like "Personal Care" map to keys like PERSONAL_CARE
+  const tone =
+    categoryTone[label.toUpperCase().replace(/\s+/g, "_")] ?? categoryTone.OTHER;
 
   return (
     <span
