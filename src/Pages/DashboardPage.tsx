@@ -18,6 +18,7 @@ import DashboardWidget, {
   type DashboardData,
 } from "../Components/dashboard/DashboardWidget";
 import EditableWidget from "../Components/dashboard/EditableWidget";
+import WidgetSkeleton from "../Components/dashboard/WidgetSkeleton";
 import { useUserContext } from "../Context/userContextType";
 import { useDashboardKpis } from "../Hooks/useDashboardKpis";
 import { useDashboardLayout } from "../Hooks/useDashboardLayout";
@@ -158,7 +159,17 @@ export default function DashboardPage() {
       )}
 
       {isLayoutLoading || !activeLayout ? (
-        <p className="text-sm text-slate-400">Loading dashboard…</p>
+        // Skeletons of the default layout until the saved layout has loaded
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          {createDefaultLayout().widgets.map((widget) => (
+            <div
+              key={widget.id}
+              className={widget.size === "full" ? "lg:col-span-2" : ""}
+            >
+              <WidgetSkeleton widget={widget} />
+            </div>
+          ))}
+        </div>
       ) : draft ? (
         <>
           {hiddenWidgets.length > 0 && (

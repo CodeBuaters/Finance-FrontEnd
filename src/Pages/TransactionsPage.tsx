@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import type { Category } from "../Types/category";
 import type { Transaction } from "../Types/transaction";
+import Skeleton from "../Components/common/Skeleton";
 import TransactionTable from "../Components/transactions/TransactionsTable";
 import TransactionsPagination from "../Components/transactions/TransactionsPagination";
 import TransactionsToolbar from "../Components/transactions/TransactionsToolbar";
@@ -9,10 +10,15 @@ type TransactionFilter = "ALL" | Transaction["transactionType"];
 
 type TransactionsPageProps = {
   transactions: Transaction[];
+  isLoading?: boolean;
+  // True when the transactions could not be loaded
+  error?: boolean;
 };
 
 export default function TransactionsPage({
   transactions,
+  isLoading = false,
+  error = false,
 }: TransactionsPageProps) {
   const [query, setQuery] = useState("");
   const [type, setType] = useState<TransactionFilter>("ALL");
@@ -52,9 +58,15 @@ export default function TransactionsPage({
             All transactions
           </h2>
         </div>
-        <p className="text-xs text-slate-400">
-          {filteredTransactions.length} of {transactions.length} transactions
-        </p>
+        {isLoading ? (
+          <Skeleton className="h-3 w-28" />
+        ) : (
+          !error && (
+            <p className="animate-content-in text-xs text-slate-400 motion-reduce:animate-none">
+              {filteredTransactions.length} of {transactions.length} transactions
+            </p>
+          )
+        )}
       </div>
       <TransactionsToolbar
         query={query}
@@ -65,7 +77,11 @@ export default function TransactionsPage({
         onTypeChange={setType}
         onCategoryChange={setCategory}
       />
-      <TransactionTable transactions={filteredTransactions} />
+      <TransactionTable
+        transactions={filteredTransactions}
+        isLoading={isLoading}
+        error={error}
+      />
       <TransactionsPagination count={filteredTransactions.length} />
     </section>
   );
