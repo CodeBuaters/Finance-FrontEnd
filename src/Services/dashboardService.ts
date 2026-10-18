@@ -44,6 +44,18 @@ export async function getExpensesByCategory(): Promise<CategorySpending[]> {
   }));
 }
 
+// The last `maxMonths` months for the spending chart. The backend always returns
+// 12 months, so months before the first one with any spending are dropped
+// (e.g. a new user only sees the months they have actually used the app).
+export const getRecentMonthlySpending = (
+  monthlySpending: MonthlySpending[],
+  maxMonths = 6,
+) => {
+  const recent = monthlySpending.slice(-maxMonths);
+  const firstWithSpending = recent.findIndex((month) => month.total > 0);
+  return firstWithSpending === -1 ? [] : recent.slice(firstWithSpending);
+};
+
 export type KpiValue = {
   value: number;
   // Percentage change compared to the previous month, null when there is nothing to compare against

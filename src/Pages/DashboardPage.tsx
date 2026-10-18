@@ -1,9 +1,11 @@
 import { ArrowDownRight, ArrowUpRight, Wallet } from "lucide-react";
 import ExpensePieChart from "../Components/dashboard/ExpensePieChart";
 import KPICard from "../Components/dashboard/KPICard";
+import MonthlySpendingChart from "../Components/dashboard/MonthlySpendingChart";
 import { useUserContext } from "../Context/userContextType";
 import { useDashboardKpis } from "../Hooks/useDashboardKpis";
 import { useExpensesByCategory } from "../Hooks/useExpensesByCategory";
+import { useMonthlySpending } from "../Hooks/useMonthlySpending";
 import {
   formatChangePercent,
   type KpiValue,
@@ -22,6 +24,7 @@ export default function DashboardPage() {
   const { user } = useUserContext();
   const { kpis, isLoading, error } = useDashboardKpis();
   const { data: categorySpending } = useExpensesByCategory();
+  const { data: monthlySpending } = useMonthlySpending();
 
   return (
     <section className="mx-auto max-w-[1100px]">
@@ -65,10 +68,11 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Chart row: two columns on large screens, more charts go next to this one */}
-      {categorySpending && (
+      {/* Chart row: two columns on large screens */}
+      {(monthlySpending || categorySpending) && (
         <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <ExpensePieChart data={categorySpending} />
+          {monthlySpending && <MonthlySpendingChart data={monthlySpending} />}
+          {categorySpending && <ExpensePieChart data={categorySpending} />}
         </div>
       )}
     </section>

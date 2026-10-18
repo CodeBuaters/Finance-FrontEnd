@@ -18,3 +18,18 @@ export const getPreviousMonth = (reference: Date) =>
 
 export const getStartOfMonth = (reference: Date) =>
   new Date(reference.getFullYear(), reference.getMonth(), 1);
+
+// "YYYY-MM" month keys from the backend, parsed as local time like parseTransactionDate
+export const parseYearMonth = (value: string) => {
+  const [year, month] = value.split("-").map(Number);
+  return new Date(year, month - 1, 1);
+};
+
+export const formatMonthShort = (value: string) =>
+  parseYearMonth(value).toLocaleDateString("en-US", { month: "short" });
+
+export const formatMonthLong = (value: string) =>
+  parseYearMonth(value).toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });

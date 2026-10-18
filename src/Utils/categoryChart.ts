@@ -23,17 +23,10 @@ const defaultCategoryColors: Record<string, string> = {
 
 const defaultCategoryOrder = Object.keys(defaultCategoryColors);
 
-// User-created categories get a colour from this palette by id, so the colour stays stable
-const customCategoryColors = [
-  "#84cc16",
-  "#e11d48",
-  "#a855f7",
-  "#eab308",
-  "#0891b2",
-  "#c2410c",
-  "#22c55e",
-  "#64748b",
-];
+// User-created categories get a colour from this palette by id, so the colour stays
+// stable. These are the dark steps furthest (OKLab ΔE >= 15) from every default hue
+// above; more custom categories than this share colours, the legend labels tell them apart.
+const customCategoryColors = ["#065f46", "#9f1239", "#6b21a8", "#a16207"];
 
 const getDefaultKey = (category: ChartCategory) => category.name.trim().toLowerCase();
 
