@@ -11,6 +11,7 @@ type Loaded<T> = { data: T | null; error: unknown };
 // Takes the monthly spending and transactions the dashboard already loaded for
 // its other widgets, so the KPIs only fetch the summary themselves.
 export function useDashboardKpis(
+  enabled: boolean,
   monthlySpending: Loaded<MonthlySpending[]>,
   transactions: Loaded<Transaction[]>,
 ) {
@@ -18,6 +19,8 @@ export function useDashboardKpis(
   const [summaryError, setSummaryError] = useState<unknown>(null);
 
   useEffect(() => {
+    if (!enabled) return;
+
     let cancelled = false;
     getDashboardSummary()
       .then((result) => {
@@ -30,7 +33,7 @@ export function useDashboardKpis(
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [enabled]);
 
   const error = summaryError ?? monthlySpending.error ?? transactions.error;
   const kpis =

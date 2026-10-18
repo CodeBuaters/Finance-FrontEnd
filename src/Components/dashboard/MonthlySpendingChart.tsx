@@ -35,10 +35,12 @@ function MonthTooltip({
 
 export default function MonthlySpendingChart({
   data,
+  maxMonths = 6,
 }: {
   data: MonthlySpending[];
+  maxMonths?: number;
 }) {
-  const months = getRecentMonthlySpending(data);
+  const months = getRecentMonthlySpending(data, maxMonths);
 
   return (
     <DashboardCard
@@ -52,7 +54,7 @@ export default function MonthlySpendingChart({
     >
       {months.length === 0 ? (
         <p className="py-10 text-center text-sm text-slate-400">
-          No spending in the last 6 months yet.
+          No spending in the last {maxMonths} months yet.
         </p>
       ) : (
         <div className="h-[220px]">

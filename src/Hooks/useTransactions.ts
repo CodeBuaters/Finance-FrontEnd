@@ -3,13 +3,14 @@ import { useUserContext } from "../Context/userContextType";
 import { getTransactionsByUserId } from "../Services/transactionService";
 import type { Transaction } from "../Types/transaction";
 
-export function useTransactions() {
+// Fetches only while `enabled`, so hidden dashboard widgets don't load data
+export function useTransactions(enabled = true) {
   const { user } = useUserContext();
   const [data, setData] = useState<Transaction[] | null>(null);
   const [error, setError] = useState<unknown>(null);
 
   useEffect(() => {
-    if (user?.id === undefined) return;
+    if (!enabled || user?.id === undefined) return;
 
     let cancelled = false;
     getTransactionsByUserId(user.id)
@@ -23,7 +24,7 @@ export function useTransactions() {
     return () => {
       cancelled = true;
     };
-  }, [user?.id]);
+  }, [enabled, user?.id]);
 
   return { data, isLoading: data === null && error === null, error };
 }
