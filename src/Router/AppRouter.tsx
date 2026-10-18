@@ -5,7 +5,6 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
-import { useEffect, useState } from "react";
 import DashboardPage from "../Pages/DashboardPage";
 import RegisterPage from "../Pages/RegisterPage";
 import TransactionsPageProps from "../Pages/TransactionsPage";
@@ -17,9 +16,7 @@ import LoginPage from "../Pages/LoginPage";
 import AuthLayout from "../Layouts/AuthLayout";
 import AppLayout from "../Layouts/AppLayout";
 import { getAccessToken } from "../Services/api";
-import type { Transaction } from "../Types/transaction";
-import { getTransactionsByUserId } from "../Services/transactionService";
-import { useUserContext } from "../Context/userContextType";
+import { useTransactions } from "../Hooks/useTransactions";
 
 const isAuthenticated = () => {
   return getAccessToken() !== null;
@@ -30,16 +27,15 @@ const ProtectedRoute = () => {
 };
 
 function TransactionsRoute() {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const { user } = useUserContext();
+  const { data, isLoading, error } = useTransactions();
 
-  useEffect(() => {
-    if (user?.id === undefined) return;
-
-    getTransactionsByUserId(user.id).then(setTransactions);
-  }, [user?.id]);
-
-  return <TransactionsPageProps transactions={transactions} />;
+  return (
+    <TransactionsPageProps
+      transactions={data ?? []}
+      isLoading={isLoading}
+      error={error !== null}
+    />
+  );
 }
 
 export default function AppRouter() {

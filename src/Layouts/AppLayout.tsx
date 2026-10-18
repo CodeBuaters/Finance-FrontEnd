@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "../Components/navigation/Sidebar";
 import TopBar from "../Components/navigation/TopBar";
 
 const AppLayout = () => {
   // Menu on small screens (hamburger): open or closed
   const [menuOpen, setMenuOpen] = useState(false);
+  const { pathname } = useLocation();
 
   return (
     <div className="flex min-h-screen bg-[#eef2f6] text-slate-900">
@@ -23,7 +24,10 @@ const AppLayout = () => {
         <TopBar onMenuClick={() => setMenuOpen(true)} />
 
         <main className="p-4 sm:p-6 lg:p-8">
-          <Outlet />
+          {/* Keyed by path, so every page fades in when navigated to */}
+          <div key={pathname} className="animate-content-in motion-reduce:animate-none">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

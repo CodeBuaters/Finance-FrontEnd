@@ -8,6 +8,7 @@ import ExpensePieChart from "./ExpensePieChart";
 import KpiCards from "./KpiCards";
 import MonthlySpendingChart from "./MonthlySpendingChart";
 import RecentTransactionsCard from "./RecentTransactionsCard";
+import WidgetSkeleton from "./WidgetSkeleton";
 
 type Loaded<T> = { data: T | null; error: unknown };
 
@@ -19,16 +20,14 @@ export type DashboardData = {
   transactions: Loaded<Transaction[]>;
 };
 
-// Loading and error states in the widget's own card, so the layout doesn't jump
-function WidgetStatus({ widget, error }: { widget: WidgetConfig; error: unknown }) {
+// Error state in the widget's own card, so the layout doesn't jump
+function WidgetError({ widget }: { widget: WidgetConfig }) {
   const { title } = getWidgetDefinition(widget.id);
 
   return (
     <DashboardCard title={title}>
-      <p
-        className={`py-10 text-center text-sm ${error ? "text-red-500" : "text-slate-400"}`}
-      >
-        {error ? "Could not load this widget." : "Loading…"}
+      <p className="py-10 text-center text-sm text-red-500">
+        Could not load this widget.
       </p>
     </DashboardCard>
   );
@@ -43,9 +42,14 @@ export default function DashboardWidget({
 }) {
   const render = <T,>(loaded: Loaded<T>, content: (value: T) => React.ReactNode) =>
     loaded.data !== null ? (
-      content(loaded.data)
+      // Fades in once loaded, replacing the skeleton
+      <div className="animate-content-in motion-reduce:animate-none">
+        {content(loaded.data)}
+      </div>
+    ) : loaded.error ? (
+      <WidgetError widget={widget} />
     ) : (
-      <WidgetStatus widget={widget} error={loaded.error} />
+      <WidgetSkeleton widget={widget} />
     );
 
   switch (widget.id) {

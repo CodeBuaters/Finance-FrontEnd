@@ -1,11 +1,22 @@
 import { removeAccessToken, getAccessToken } from "../../Services/api";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useUserContext } from "../../Context/userContextType";
 import { logoutUser } from "../../Services/authService";
 import { getInitials } from "../../Utils/user";
 
+// Title shown in the top bar for each page, same names as in the sidebar
+const pageTitles: Record<string, string> = {
+  "/": "Dashboard",
+  "/transactions": "Transactions",
+  "/budgets": "Budgets",
+  "/categories": "Categories",
+  "/import-csv": "Import CSV",
+  "/settings": "Settings",
+};
+
 export default function TopBar({ onMenuClick }: { onMenuClick: () => void }) {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   const { user, logout } = useUserContext();
   const isLoggedIn = getAccessToken() !== null;
@@ -34,7 +45,7 @@ export default function TopBar({ onMenuClick }: { onMenuClick: () => void }) {
             Personal finance
           </p>
           <h1 className="mt-1 text-[18px] font-bold tracking-[-0.03em] text-slate-950">
-            Transactions
+            {pageTitles[pathname] ?? "FinSight"}
           </h1>
         </div>
       </div>

@@ -4,6 +4,7 @@ import { getCategories, createCategory, updateCategory, deleteCategory } from ".
 import type { Transaction } from "../Types/transaction";
 import type { Category } from "../Types/category";
 import { useUserContext } from "../Context/userContextType";
+import Skeleton from "../Components/common/Skeleton";
 
 
 
@@ -17,18 +18,28 @@ export default function CategoriesPage() {
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [editingCategoryId, setEditingCategoryId] = useState<number | null>(null);
   const [editingCategoryName, setEditingCategoryName] = useState("");
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
+  const [isLoadingTransactions, setIsLoadingTransactions] = useState(
+    user?.id !== undefined,
+  );
 
   useEffect(() => {
-    getCategories().then((data) => {
-      setCategories(data);
-    });
+    getCategories()
+      .then((data) => {
+        setCategories(data);
+      })
+      .catch((error) => console.error("Loading categories failed:", error))
+      .finally(() => setIsLoadingCategories(false));
 
     if (user?.id === undefined) return;
 
-    getTransactionsByUserId(user.id).then((data) => {
-      console.log("Transactions response:", data)
-      setTransactions(data);
-    });
+    getTransactionsByUserId(user.id)
+      .then((data) => {
+        console.log("Transactions response:", data)
+        setTransactions(data);
+      })
+      .catch((error) => console.error("Loading transactions failed:", error))
+      .finally(() => setIsLoadingTransactions(false));
   }, []);
 
 
@@ -155,7 +166,14 @@ export default function CategoriesPage() {
             {isAddingCategory ? "Adding..." : "Add category"}
           </button>
         </form>
-        <div className="flex flex-wrap gap-3 mt-5">
+        {isLoadingCategories ? (
+          <div role="status" aria-label="Loading categories" className="flex flex-wrap gap-3 mt-5">
+            {["w-20", "w-28", "w-24", "w-32", "w-20", "w-28"].map((width, index) => (
+              <Skeleton key={index} className={`h-9 rounded-xl ${width}`} />
+            ))}
+          </div>
+        ) : (
+        <div className="flex flex-wrap gap-3 mt-5 animate-content-in motion-reduce:animate-none">
           {categories.map((category) => (
             <div
               key={category.id}
@@ -222,6 +240,7 @@ export default function CategoriesPage() {
             </div>
           ))}
         </div>
+        )}
       </div>
 
 
@@ -247,7 +266,20 @@ export default function CategoriesPage() {
             </tr>
           </thead>
 
-          <tbody>
+          {isLoadingTransactions ? (
+          <tbody aria-busy="true">
+            {Array.from({ length: 6 }, (_, index) => (
+              <tr key={index} className="border-t border-slate-50">
+                <td className="px-5 py-4"><Skeleton className="h-3.5 w-28" /></td>
+                <td className="px-5 py-4"><Skeleton className="h-3.5 w-14" /></td>
+                <td className="px-5 py-4"><Skeleton className="h-3 w-20" /></td>
+                <td className="px-5 py-4"><Skeleton className="h-8 w-32 rounded-xl" /></td>
+                <td className="px-5 py-4"><Skeleton className="h-7 w-16 rounded-lg" /></td>
+              </tr>
+            ))}
+          </tbody>
+          ) : (
+          <tbody className="animate-content-in motion-reduce:animate-none">
             {transactions.map((transaction) => (
               <tr
                 key={transaction.id}
@@ -312,6 +344,7 @@ export default function CategoriesPage() {
               </tr>
             ))}
           </tbody>
+          )}
         </table>
       </div>
     </div>

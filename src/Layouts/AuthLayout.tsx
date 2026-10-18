@@ -1,8 +1,10 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Logo from "../Components/navigation/Logo";
 
 // Shared frame for Login and Register: logo top left, form centered
 const AuthLayout = () => {
+  const { pathname } = useLocation();
+
   return (
     <div className="flex min-h-screen flex-col bg-white p-6">
       {/* 25% bigger than in the sidebar */}
@@ -14,7 +16,10 @@ const AuthLayout = () => {
         <p className="text-lg font-medium tracking-tight text-slate-600">
           Understand your money.
         </p>
-        <Outlet />
+        {/* Keyed by path, so switching between login and register fades in */}
+        <div key={pathname} className="animate-content-in motion-reduce:animate-none">
+          <Outlet />
+        </div>
       </div>
     </div>
   );
