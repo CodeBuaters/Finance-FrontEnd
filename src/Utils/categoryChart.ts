@@ -1,50 +1,53 @@
 import type { Category } from "../Types/category";
 
-// Fixed order and colour per category, so a category keeps its colour no matter
-// which others are present. The first seven are ordered so neighbouring slices
-// stay distinguishable (also with colour blindness); the rest are rarer expenses.
-export const categoryChartOrder: Category[] = [
-  "FOOD",
-  "HOUSING",
-  "HEALTHCARE",
-  "TRANSPORTATION",
-  "SHOPPING",
-  "UTILITIES",
-  "ENTERTAINMENT",
-  "EDUCATION",
-  "PERSONAL_CARE",
-  "TRAVEL",
-  "SALARY",
-  "OTHER",
-];
+type ChartCategory = Pick<Category, "id" | "name">;
 
-// Same hues as TransactionCategoryBadge
-export const categoryColors: Record<Category, string> = {
-  FOOD: "#f59e0b",
-  HOUSING: "#8b5cf6",
-  HEALTHCARE: "#14b8a6",
-  TRANSPORTATION: "#3b82f6",
-  SHOPPING: "#f97316",
-  UTILITIES: "#6366f1",
-  ENTERTAINMENT: "#ec4899",
-  EDUCATION: "#06b6d4",
-  PERSONAL_CARE: "#d946ef",
-  TRAVEL: "#0ea5e9",
-  SALARY: "#10b981",
-  OTHER: "#94a3b8",
+// Fixed order and colour per default category (keyed by lower-cased name), so a
+// category keeps its colour no matter which others are present. The first seven
+// are ordered so neighbouring slices stay distinguishable (also with colour
+// blindness); the rest are rarer expenses. Same hues as TransactionCategoryBadge.
+const defaultCategoryColors: Record<string, string> = {
+  food: "#f59e0b",
+  housing: "#8b5cf6",
+  healthcare: "#14b8a6",
+  transportation: "#3b82f6",
+  shopping: "#f97316",
+  utilities: "#6366f1",
+  entertainment: "#ec4899",
+  education: "#06b6d4",
+  "personal care": "#d946ef",
+  travel: "#0ea5e9",
+  salary: "#10b981",
+  other: "#94a3b8",
 };
 
-export const categoryLabels: Record<Category, string> = {
-  FOOD: "Food & Dining",
-  HOUSING: "Housing",
-  HEALTHCARE: "Healthcare",
-  TRANSPORTATION: "Transport",
-  SHOPPING: "Shopping",
-  UTILITIES: "Utilities",
-  ENTERTAINMENT: "Entertainment",
-  EDUCATION: "Education",
-  PERSONAL_CARE: "Personal Care",
-  TRAVEL: "Travel",
-  SALARY: "Salary",
-  OTHER: "Other",
+const defaultCategoryOrder = Object.keys(defaultCategoryColors);
+
+// User-created categories get a colour from this palette by id, so the colour stays stable
+const customCategoryColors = [
+  "#84cc16",
+  "#e11d48",
+  "#a855f7",
+  "#eab308",
+  "#0891b2",
+  "#c2410c",
+  "#22c55e",
+  "#64748b",
+];
+
+const getDefaultKey = (category: ChartCategory) => category.name.trim().toLowerCase();
+
+export const getCategoryColor = (category: ChartCategory) =>
+  defaultCategoryColors[getDefaultKey(category)] ??
+  customCategoryColors[category.id % customCategoryColors.length];
+
+// Default categories in their fixed order, custom categories alphabetically after
+// them, and "Other" always last
+export const compareCategoriesForChart = (a: ChartCategory, b: ChartCategory) => {
+  const rank = (category: ChartCategory) => {
+    const index = defaultCategoryOrder.indexOf(getDefaultKey(category));
+    return index === -1 ? defaultCategoryOrder.length - 1.5 : index;
+  };
+
+  return rank(a) - rank(b) || a.name.localeCompare(b.name);
 };

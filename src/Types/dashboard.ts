@@ -16,8 +16,10 @@ export interface MonthlySpending {
   total: number;
 }
 
-// GET /api/dashboard/categories – current month's expenses grouped by category
+// GET /api/dashboard/categories – current month's expenses grouped by category.
+// The backend serializes the Category entity here, so there is no `default` flag.
+// Uncategorized expenses are counted under the default "Other" category.
 export interface CategorySpending {
-  category: Category;
+  category: Pick<Category, "id" | "name">;
   total: number;
 }

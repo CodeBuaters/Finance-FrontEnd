@@ -1,13 +1,12 @@
 import { Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import type { CategorySpending } from "../../Types/dashboard";
 import {
-  categoryChartOrder,
-  categoryColors,
-  categoryLabels,
+  compareCategoriesForChart,
+  getCategoryColor,
 } from "../../Utils/categoryChart";
 import { formatCurrency, formatWholeCurrency } from "../../Utils/currency";
 
-type Slice = { name: string; value: number; fill: string };
+type Slice = { id: number; name: string; value: number; fill: string };
 
 function SliceTooltip({
   active,
@@ -38,15 +37,12 @@ export default function ExpensePieChart({
 }) {
   const slices: Slice[] = data
     .filter(({ total }) => total > 0)
-    .sort(
-      (a, b) =>
-        categoryChartOrder.indexOf(a.category) -
-        categoryChartOrder.indexOf(b.category),
-    )
+    .sort((a, b) => compareCategoriesForChart(a.category, b.category))
     .map(({ category, total }) => ({
-      name: categoryLabels[category],
+      id: category.id,
+      name: category.name,
       value: total,
-      fill: categoryColors[category],
+      fill: getCategoryColor(category),
     }));
   const total = slices.reduce((sum, slice) => sum + slice.value, 0);
 
@@ -89,7 +85,7 @@ export default function ExpensePieChart({
           <ul className="w-full flex-1 space-y-2.5">
             {slices.map((slice, index) => (
               <li
-                key={slice.name}
+                key={slice.id}
                 // Rows fade in one after another while the ring sweeps in
                 className="flex items-center justify-between gap-4 text-sm animate-[legend-in_400ms_ease-out_both] motion-reduce:animate-none"
                 style={{ animationDelay: `${index * 70}ms` }}
