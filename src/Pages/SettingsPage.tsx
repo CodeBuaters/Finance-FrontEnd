@@ -6,6 +6,7 @@ import {
   deleteAccount,
   updateProfile,
 } from "../Services/userService";
+import { CURRENCIES, getCurrency, saveCurrency } from "../Utils/currency";
 
 export default function SettingsPage() {
   const { user, setUser, logout } = useUserContext();
@@ -18,6 +19,14 @@ export default function SettingsPage() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordMessage, setPasswordMessage] = useState("");
+
+  const [currency, setCurrency] = useState(getCurrency().code);
+
+  const handleCurrencyChange = (code: string) => {
+    // Saved in the browser; every page reads it when it shows an amount
+    saveCurrency(code);
+    setCurrency(code);
+  };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -90,6 +99,24 @@ export default function SettingsPage() {
           Save
         </button>
       </form>
+
+      <div className={card}>
+        <h2 className="font-semibold">Currency</h2>
+        <select
+          className={input}
+          value={currency}
+          onChange={(e) => handleCurrencyChange(e.target.value)}
+        >
+          {CURRENCIES.map((c) => (
+            <option key={c.code} value={c.code}>
+              {c.code} – {c.name} ({c.symbol})
+            </option>
+          ))}
+        </select>
+        <p className="text-sm text-slate-500">
+          All amounts are converted from US dollars using approximate rates.
+        </p>
+      </div>
 
       <form onSubmit={handlePasswordSubmit} className={card}>
         <h2 className="font-semibold">Change password</h2>

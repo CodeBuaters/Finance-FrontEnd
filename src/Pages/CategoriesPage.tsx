@@ -5,6 +5,7 @@ import type { Transaction } from "../Types/transaction";
 import type { Category } from "../Types/category";
 import { useUserContext } from "../Context/userContextType";
 import Skeleton from "../Components/common/Skeleton";
+import { formatCurrency } from "../Utils/currency";
 
 
 
@@ -290,7 +291,7 @@ export default function CategoriesPage() {
                 </td>
 
                 <td className="px-5 py-4 text-sm font-semibold text-slate-800">
-                  {transaction.amount}
+                  {formatCurrency(transaction.amount)}
                 </td>
 
                 <td className="px-5 py-4 text-xs text-slate-500">

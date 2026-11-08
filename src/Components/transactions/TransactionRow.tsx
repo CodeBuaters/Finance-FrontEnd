@@ -1,11 +1,6 @@
 import type { Transaction } from "../../Types/transaction";
+import { formatSignedAmount } from "../../Utils/currency";
 import TransactionCategoryBadge from "./TransactionCategoryBadge";
-
-const formatAmount = (
-  transactionType: Transaction["transactionType"],
-  amount: number,
-) =>
-  `${transactionType === "INCOME" ? "+" : "-"}$${Math.abs(amount).toFixed(2)}`;
 
 export default function TransactionRow({
   transaction,
@@ -33,7 +28,7 @@ export default function TransactionRow({
       <td
         className={`whitespace-nowrap px-4 py-[15px] text-right text-[12px] font-bold sm:px-5 ${amountTone}`}
       >
-        {formatAmount(transaction.transactionType, transaction.amount)}
+        {formatSignedAmount(transaction.transactionType, transaction.amount)}
       </td>
       <td className="px-4 py-[15px] sm:px-5">
         {transaction.transactionType === "TRANSFER" &&
