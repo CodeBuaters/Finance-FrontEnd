@@ -64,7 +64,7 @@ export default function TransactionsToolbar({
             <option key={itemCategory.id} value={String(itemCategory.id)}>
               {itemCategory.name}
             </option>
-          )
+          );
         })}
       </select>
     </div>

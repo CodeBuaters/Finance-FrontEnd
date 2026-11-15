@@ -1,11 +1,15 @@
 import type { Transaction } from "../../Types/transaction";
 import Skeleton from "../common/Skeleton";
 import TransactionRow from "./TransactionRow";
+import { useState } from "react";
+import type { SortDirection } from "../../Types/sort";
 
 interface TransactionsTableProps {
   transactions: Transaction[];
   isLoading?: boolean;
   error?: boolean;
+  sortDirection: SortDirection;
+  onSortToggle: () => void;
 }
 
 const SKELETON_ROWS = 8;
@@ -43,6 +47,8 @@ export default function TransactionsTable({
   isLoading = false,
   error = false,
 }: TransactionsTableProps) {
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+
   return (
     <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_2px_8px_rgba(15,23,42,0.03)]">
       <div className="overflow-x-auto">
@@ -52,7 +58,16 @@ export default function TransactionsTable({
         >
           <thead>
             <tr className="border-b border-slate-100 bg-slate-50/70 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400">
-              <th className="px-4 py-3 font-semibold sm:px-5">Date</th>
+              <th className="px-4 py-3 font-semibold sm:px-5">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setSortDirection((d) => (d === "desc" ? "asc" : "desc"))
+                  }
+                >
+                  Date {sortDirection === "desc" ? "↓" : "↑"}
+                </button>
+              </th>
               <th className="px-4 py-3 font-semibold sm:px-5">Merchant</th>
               <th className="px-4 py-3 font-semibold sm:px-5">Description</th>
               <th className="px-4 py-3 font-semibold sm:px-5">Category</th>
@@ -72,7 +87,10 @@ export default function TransactionsTable({
             // so the animation only plays when the data first arrives.
             <tbody className="animate-content-in motion-reduce:animate-none">
               {transactions.map((transaction) => (
-                <TransactionRow key={transaction.id} transaction={transaction} />
+                <TransactionRow
+                  key={transaction.id}
+                  transaction={transaction}
+                />
               ))}
             </tbody>
           )}
