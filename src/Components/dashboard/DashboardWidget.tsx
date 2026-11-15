@@ -9,6 +9,7 @@ import KpiCards from "./KpiCards";
 import MonthlySpendingChart from "./MonthlySpendingChart";
 import RecentTransactionsCard from "./RecentTransactionsCard";
 import WidgetSkeleton from "./WidgetSkeleton";
+import type { ReactNode } from "react";
 
 type Loaded<T> = { data: T | null; error: unknown };
 
@@ -40,7 +41,7 @@ export default function DashboardWidget({
   widget: WidgetConfig;
   data: DashboardData;
 }) {
-  const render = <T,>(loaded: Loaded<T>, content: (value: T) => React.ReactNode) =>
+  const render = <T,>(loaded: Loaded<T>, content: (value: T) => ReactNode) =>
     loaded.data !== null ? (
       // Fades in once loaded, replacing the skeleton
       <div className="animate-content-in motion-reduce:animate-none">
