@@ -5,6 +5,7 @@ import Skeleton from "../Components/common/Skeleton";
 import TransactionTable from "../Components/transactions/TransactionsTable";
 import TransactionsPagination from "../Components/transactions/TransactionsPagination";
 import TransactionsToolbar from "../Components/transactions/TransactionsToolbar";
+import type { SortDirection } from "../Types/sort";
 
 type TransactionFilter = "ALL" | Transaction["transactionType"];
 
@@ -29,7 +30,9 @@ export default function TransactionsPage({
     ...new Map(
       transactions
         .map(({ category: itemCategory }) => itemCategory)
-        .filter((itemCategory): itemCategory is Category => itemCategory != null)
+        .filter(
+          (itemCategory): itemCategory is Category => itemCategory != null,
+        )
         .map((itemCategory) => [itemCategory.id, itemCategory]),
     ).values(),
   ];
@@ -49,6 +52,18 @@ export default function TransactionsPage({
     [category, query, transactions, type],
   );
 
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+
+  const sortedTransactions = useMemo(() => {
+    const direction = sortDirection === "asc" ? 1 : -1;
+    return [...filteredTransactions].sort(
+      (a, b) =>
+        direction *
+        (new Date(a.transactionDate).getTime() -
+          new Date(b.transactionDate).getTime()),
+    );
+  }, [filteredTransactions, sortDirection]);
+
   return (
     <section className="mx-auto max-w-[1100px]">
       <div className="mb-6 flex items-end justify-between">
@@ -63,7 +78,8 @@ export default function TransactionsPage({
         ) : (
           !error && (
             <p className="animate-content-in text-xs text-slate-400 motion-reduce:animate-none">
-              {filteredTransactions.length} of {transactions.length} transactions
+              {filteredTransactions.length} of {transactions.length}{" "}
+              transactions
             </p>
           )
         )}
@@ -78,11 +94,15 @@ export default function TransactionsPage({
         onCategoryChange={setCategory}
       />
       <TransactionTable
-        transactions={filteredTransactions}
+        transactions={sortedTransactions}
         isLoading={isLoading}
         error={error}
+        sortDirection={sortDirection}
+        onSortToggle={() =>
+          setSortDirection((d) => (d === "desc" ? "asc" : "desc"))
+        }
       />
-      <TransactionsPagination count={filteredTransactions.length} />
+      <TransactionsPagination count={sortedTransactions.length} />
     </section>
   );
 }
