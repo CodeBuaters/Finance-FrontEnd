@@ -55,7 +55,7 @@ export default function TransactionsPage({
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
   const sortedTransactions = useMemo(() => {
-    const direction = sortDirection === "asc" ? -1 : 1;
+    const direction = sortDirection === "asc" ? 1 : -1;
     return [...filteredTransactions].sort(
       (a, b) =>
         direction *
