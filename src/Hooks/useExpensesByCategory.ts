@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { getExpensesByCategory } from "../Services/dashboardService";
 import type { CategorySpending } from "../Types/dashboard";
+import type { DashboardScope } from "../Types/family";
 
 // Fetches only while `enabled`, so hidden dashboard widgets don't load data
-export function useExpensesByCategory(enabled = true) {
+export function useExpensesByCategory(enabled = true, scope: DashboardScope = "me") {
   const [data, setData] = useState<CategorySpending[] | null>(null);
   const [error, setError] = useState<unknown>(null);
 
@@ -11,7 +12,7 @@ export function useExpensesByCategory(enabled = true) {
     if (!enabled) return;
 
     let cancelled = false;
-    getExpensesByCategory()
+    getExpensesByCategory(scope)
       .then((result) => {
         if (!cancelled) setData(result);
       })
@@ -22,7 +23,7 @@ export function useExpensesByCategory(enabled = true) {
     return () => {
       cancelled = true;
     };
-  }, [enabled]);
+  }, [enabled, scope]);
 
   return { data, isLoading: data === null && error === null, error };
 }
