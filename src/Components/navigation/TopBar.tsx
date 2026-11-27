@@ -11,6 +11,7 @@ const pageTitles: Record<string, string> = {
   "/budgets": "Budgets",
   "/categories": "Categories",
   "/import-csv": "Import CSV",
+  "/family": "Family",
   "/settings": "Settings",
 };
 

@@ -27,6 +27,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
           ["◔", "Budgets", "/budgets"],
           ["◇", "Categories", "/categories"],
           ["↥", "Import CSV", "/import-csv"],
+          ["⌂", "Family", "/family"],
           ["⚙", "Settings", "/settings"],
         ].map(([icon, label, path]) => (
           <NavLink

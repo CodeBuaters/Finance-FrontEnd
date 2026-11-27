@@ -13,7 +13,7 @@ import {
   sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
 import { Plus, Settings2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DashboardWidget, {
   type DashboardData,
 } from "../Components/dashboard/DashboardWidget";
@@ -25,7 +25,9 @@ import { useDashboardLayout } from "../Hooks/useDashboardLayout";
 import { useExpensesByCategory } from "../Hooks/useExpensesByCategory";
 import { useMonthlySpending } from "../Hooks/useMonthlySpending";
 import { useTransactions } from "../Hooks/useTransactions";
+import { getFamily } from "../Services/familyService";
 import type { DashboardLayout, WidgetId } from "../Types/dashboardLayout";
+import type { DashboardScope } from "../Types/family";
 import {
   createDefaultLayout,
   getWidgetDefinition,
@@ -46,6 +48,15 @@ export default function DashboardPage() {
   const [draft, setDraft] = useState<DashboardLayout | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState(false);
+  // "family" shows the totals of every family member. The switch only appears in a family.
+  const [scope, setScope] = useState<DashboardScope>("me");
+  const [isInFamily, setIsInFamily] = useState(false);
+
+  useEffect(() => {
+    getFamily()
+      .then((family) => setIsInFamily(family !== null))
+      .catch(() => setIsInFamily(false));
+  }, []);
 
   const activeLayout = draft ?? layout;
   const visibleWidgets =
@@ -58,12 +69,14 @@ export default function DashboardPage() {
   // Each dataset is fetched once, and only when a visible widget needs it
   const monthlySpending = useMonthlySpending(
     isVisible("monthlySpending") || isVisible("kpis"),
+    scope,
   );
   const transactions = useTransactions(
     isVisible("recentTransactions") || isVisible("kpis"),
+    scope,
   );
-  const kpis = useDashboardKpis(isVisible("kpis"), monthlySpending, transactions);
-  const categorySpending = useExpensesByCategory(isVisible("expensesByCategory"));
+  const kpis = useDashboardKpis(isVisible("kpis"), monthlySpending, transactions, scope);
+  const categorySpending = useExpensesByCategory(isVisible("expensesByCategory"), scope);
   const data: DashboardData = {
     kpis: { data: kpis.kpis, error: kpis.error },
     monthlySpending,
@@ -116,6 +129,20 @@ export default function DashboardPage() {
             Welcome back{user?.firstName ? `, ${user.firstName}` : ""}
           </h2>
         </div>
+
+        {isInFamily && (
+          <div className="ml-auto flex rounded-lg border border-slate-200 bg-white p-1">
+            {(["me", "family"] as const).map((option) => (
+              <button
+                key={option}
+                onClick={() => setScope(option)}
+                className={`rounded-md px-3 py-1 text-sm font-medium ${scope === option ? "bg-emerald-600 text-white" : "text-slate-600 hover:bg-slate-50"}`}
+              >
+                {option === "me" ? "Me" : "Family"}
+              </button>
+            ))}
+          </div>
+        )}
 
         {layout &&
           (draft ? (

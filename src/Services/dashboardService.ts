@@ -5,6 +5,7 @@ import type {
   DashboardSummary,
   MonthlySpending,
 } from "../Types/dashboard";
+import type { DashboardScope } from "../Types/family";
 import { getSignedAmount } from "../Utils/currency";
 import {
   getPreviousMonth,
@@ -15,16 +16,25 @@ import {
 
 // Imported expenses are stored with a negative amount, so the backend's expense
 // totals can come back negative. Everything below works with positive expense sums.
-export async function getDashboardSummary(): Promise<DashboardSummary> {
-  const response = await api.get<DashboardSummary>("/api/dashboard/summary");
+// scope "family" = totals of every family member
+export async function getDashboardSummary(
+  scope: DashboardScope = "me",
+): Promise<DashboardSummary> {
+  const response = await api.get<DashboardSummary>("/api/dashboard/summary", {
+    params: { scope },
+  });
   const income = Math.abs(response.data.income);
   const expenses = Math.abs(response.data.expenses);
 
   return { ...response.data, income, expenses, balance: income - expenses };
 }
 
-export async function getMonthlySpending(): Promise<MonthlySpending[]> {
-  const response = await api.get<MonthlySpending[]>("/api/dashboard/monthly");
+export async function getMonthlySpending(
+  scope: DashboardScope = "me",
+): Promise<MonthlySpending[]> {
+  const response = await api.get<MonthlySpending[]>("/api/dashboard/monthly", {
+    params: { scope },
+  });
 
   return response.data.map((month) => ({
     ...month,
@@ -32,9 +42,12 @@ export async function getMonthlySpending(): Promise<MonthlySpending[]> {
   }));
 }
 
-export async function getExpensesByCategory(): Promise<CategorySpending[]> {
+export async function getExpensesByCategory(
+  scope: DashboardScope = "me",
+): Promise<CategorySpending[]> {
   const response = await api.get<CategorySpending[]>(
     "/api/dashboard/categories",
+    { params: { scope } },
   );
 
   return response.data.map((category) => ({
