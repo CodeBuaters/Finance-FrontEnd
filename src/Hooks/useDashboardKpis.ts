@@ -4,6 +4,7 @@ import {
   getDashboardSummary,
 } from "../Services/dashboardService";
 import type { DashboardSummary, MonthlySpending } from "../Types/dashboard";
+import type { DashboardScope } from "../Types/family";
 import type { Transaction } from "../Types/transaction";
 
 type Loaded<T> = { data: T | null; error: unknown };
@@ -14,6 +15,7 @@ export function useDashboardKpis(
   enabled: boolean,
   monthlySpending: Loaded<MonthlySpending[]>,
   transactions: Loaded<Transaction[]>,
+  scope: DashboardScope = "me",
 ) {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [summaryError, setSummaryError] = useState<unknown>(null);
@@ -22,7 +24,7 @@ export function useDashboardKpis(
     if (!enabled) return;
 
     let cancelled = false;
-    getDashboardSummary()
+    getDashboardSummary(scope)
       .then((result) => {
         if (!cancelled) setSummary(result);
       })
@@ -33,7 +35,7 @@ export function useDashboardKpis(
     return () => {
       cancelled = true;
     };
-  }, [enabled]);
+  }, [enabled, scope]);
 
   const error = summaryError ?? monthlySpending.error ?? transactions.error;
   const kpis =

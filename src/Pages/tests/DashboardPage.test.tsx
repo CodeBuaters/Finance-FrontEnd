@@ -18,6 +18,9 @@ vi.mock("../../Context/userContextType", () => ({
     useUserContext: () => ({ user: { id: 1, firstName: "Matti" } }),
 }));
 
+// Not in a family, so the Me / Family switch is hidden
+vi.mock("../../Services/familyService", () => ({ getFamily: () => Promise.resolve(null) }));
+
 // The widgets themselves are tested separately; here only the layout matters
 const notLoaded = { data: null, error: null, isLoading: true };
 vi.mock("../../Hooks/useMonthlySpending", () => ({ useMonthlySpending: () => notLoaded }));

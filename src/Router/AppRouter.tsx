@@ -12,6 +12,7 @@ import BudgetsPage from "../Pages/BudgetsPage";
 import SettingsPage from "../Pages/SettingsPage";
 import ImportCSVPage from "../Pages/ImportCSVPage";
 import CategoriesPage from "../Pages/CategoriesPage";
+import FamilyPage from "../Pages/FamilyPage";
 import LoginPage from "../Pages/LoginPage";
 import AuthLayout from "../Layouts/AuthLayout";
 import AppLayout from "../Layouts/AppLayout";
@@ -53,6 +54,7 @@ export default function AppRouter() {
             <Route path="/transactions" element={<TransactionsRoute />} />
             <Route path="/budgets" element={<BudgetsPage />} />
             <Route path="/categories" element={<CategoriesPage />} />
+            <Route path="/family" element={<FamilyPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/import-csv" element={<ImportCSVPage />} />
           </Route>
